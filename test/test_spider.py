@@ -5,11 +5,11 @@ import logging
 
 
 def test_process_item():
-    root_path = 'https://www.cdnbus.bid'
-    url = 'https://www.cdnbus.bid/CESD-797'
+    root_path = 'https://www.busdmm.work'
+    url = 'https://www.busdmm.work/LD-012'
     session = HTMLSession()
     router = get_router()
     router.add_root_path(root_path)
-    fanhao = 'CESD-797'
+    fanhao = 'LD-012'
     r = session.get(url)
     process_item(r.text, url, fanhao)

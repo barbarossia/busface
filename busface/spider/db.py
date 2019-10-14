@@ -67,6 +67,8 @@ class Item(BaseModel):
         meta = json.loads(item.meta_info)
         item.cover_img_url = meta['cover_img_url']
         item.add_date = format_datetime(item.add_date)
+        tags_list = meta['tags']
+        item.tags_dict = tags_list
 
     @staticmethod
     def getit(id):
@@ -83,7 +85,7 @@ class Item(BaseModel):
         faces_dict = defaultdict(list)
         for t in item.faces_list:
             faces_dict[t.face.type_].append(t.face.value)
-        item.tags_dict = faces_dict
+        item.faces_dict = faces_dict
 
 
 class Face(BaseModel):

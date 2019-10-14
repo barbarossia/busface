@@ -1,5 +1,7 @@
 from busface.spider.db import get_items, Item, RATE_TYPE, RATE_VALUE, ItemRate, LocalItem, Face, ItemFace, convert_binary_data
 from datetime import date
+import pandas as pd
+from collections import defaultdict
 
 
 def test_save():
@@ -12,9 +14,9 @@ def test_save():
                 release_date=item_release_date, meta_info=item_meta_info)
     item.save()
 
-    blob1 = convert_binary_data('./test/6rfl_b.jpg')
-    blob2 = convert_binary_data('./test/6ewu_b.jpg')
-    blob3 = convert_binary_data('./test/798z_b.jpg')
+    blob1 = convert_binary_data('../test/6rfl_b.jpg')
+    blob2 = convert_binary_data('../test/6ewu_b.jpg')
+    blob3 = convert_binary_data('../test/798z_b.jpg')
 
     face1 = Face.create(type_='genre', value=blob1,
                       url='https://www.cdnbus.bid/genre/s1')
@@ -58,6 +60,19 @@ def test_getit():
     item = Item.getit(id)
     print(repr(item))
     assert item is not None
+
+
+def test_tags_list():
+    fanhao = 'DOCP-176'
+    item = Item.get_by_fanhao(fanhao)
+    Item.loadit(item)
+    tags_dict = item.tags_dict
+    tags = ['genre', 'star']
+    limit = 10
+    for t in tags:
+        tags_dict[t] = tags_dict[t][:limit]
+    print(tags_dict)
+
 
 
 

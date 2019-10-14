@@ -42,7 +42,9 @@ def parse_item(text):
     meta['release_date'] = release_date.split()[1]
     meta['length'] = re.search(r'\d+', length).group()
 
-    tag_list = []
+    tag_list = {}
+    tag_list.setdefault('star', [])
+    tag_list.setdefault('genre', [])
     for tag in tags[3:]:
         links = tag.find('a')
         spans = tag.find('span.header')
@@ -50,7 +52,7 @@ def parse_item(text):
             tag_type = (spans[0].text)
             tag_value = links[0].text
             if tag_type != '' and tag_value != '':
-                tag_list.append(create_tag(tag_type, tag_value))
+                tag_list.setdefault(tag_type, []).append(tag_value)
         else:
             for link in links:
                 tag_link = link.attrs['href']
@@ -60,17 +62,16 @@ def parse_item(text):
                 if 'star' in tag_link:
                     tag_type = 'star'
                 if tag_type != '' and tag_value != '':
-                    tag_list.append(create_tag(tag_type, tag_value))
+                    tag_list.setdefault(tag_type, []).append(tag_value)
+
 
     face_list = []
     face_list.append(create_face('cover', None, cover_img_url))
-
 
     for sample in samples:
         links = sample.find('img')[0].attrs['src']
         face_type = 'sample'
         face_list.append(create_face(face_type, None, links))
-
 
     meta['tags'] = tag_list
     return meta, face_list

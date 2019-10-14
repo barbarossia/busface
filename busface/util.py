@@ -23,8 +23,7 @@ def get_cwd():
     if getattr(sys, 'frozen', False):
         return sys._MEIPASS
     else:
-        return os.getcwd()
-
+        return "C:\\Users\\barbarossia\\source\\repos\\busface"
 
 def check_testing():
     global TESTING
@@ -103,7 +102,8 @@ def to_localtime(utc_dt):
 
 def check_model_folder():
     model_path = os.path.join(DATA_PATH, MODEL_PATH)
-    abs_path = os.path.abspath(model_path)
+    cwd = get_cwd()
+    abs_path = os.path.join(cwd, model_path)
     if not os.path.exists(abs_path):
         print(f'created model folder: {abs_path}')
         os.mkdir(abs_path)

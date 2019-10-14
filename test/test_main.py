@@ -44,7 +44,7 @@ def verify_fanhao(path, fanhao):
     return exists is None
 
 
-@router.route('/<fanhao:[\w]+-[\d]+>', verify_fanhao)
+@router.route('/<fanhao:[\w]+-[\d]+>')
 def process_item(text, path, fanhao):
     '''
     process item page
@@ -64,7 +64,7 @@ def test_download():
     extra_args = {
         'roots': roots,
         'no_parse_links': False,
-        'count': 100
+        'count': 10
     }
     stats = aspider.download(extra_args=extra_args)
     stats.report()

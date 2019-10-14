@@ -82,10 +82,10 @@ class Item(BaseModel):
 
     @staticmethod
     def get_faces_dict(item):
-        faces_dict = defaultdict(list)
+        faces_list = []
         for t in item.faces_list:
-            faces_dict[t.face.type_].append(t.face.value)
-        item.faces_dict = faces_dict
+            faces_list.append(t.face)
+        item.faces_dict = faces_list
 
 
 class Face(BaseModel):

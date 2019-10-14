@@ -2,9 +2,20 @@
 html parser to extract data
 '''
 import re
+import requests
 from collections import namedtuple
 from requests_html import HTML
 from aspider.routeing import get_router
+import numpy as np
+import urllib
+import cv2
+import urllib3
+from io import StringIO
+
+from PIL import Image
+
+from skimage import io
+
 
 router = get_router()
 
@@ -86,3 +97,32 @@ def create_face(face_type, face_value, face_link):
     # face_link = router.get_url_path(face_link)
     face = Face(face_type, face_value, face_link)
     return face
+
+
+def download_face(face_url):
+    with open('pic1.jpg', 'wb') as handle:
+        response = requests.get(face_url, stream=True)
+
+        if not response.ok:
+            print
+            response
+
+        for block in response.iter_content(1024):
+            if not block:
+                break
+
+            handle.write(block)
+    return handle
+
+
+def url_to_image(url):
+    # download the image, convert it to a NumPy array, and then read
+    # it into OpenCV format
+    # resp = urllib.urlopen(url)
+    # image = np.asarray(bytearray(resp.read()), dtype="uint8")
+    # image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+
+    image = io.imread(url)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    # return the image
+    return image

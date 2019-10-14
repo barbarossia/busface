@@ -23,7 +23,7 @@ def get_cwd():
     if getattr(sys, 'frozen', False):
         return sys._MEIPASS
     else:
-        return "C:\\Users\\barbarossia\\source\\repos\\busface"
+        return "C:\\Users\\barbarossia\\busface"
 
 def check_testing():
     global TESTING

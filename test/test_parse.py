@@ -30,3 +30,4 @@ def test_process_item(html):
     meta, faces = parse_item(html)
     print(meta)
     print(faces)
+

@@ -1,7 +1,8 @@
 from busface.spider.db import get_items, Item, RATE_TYPE, RATE_VALUE, ItemRate, LocalItem, Face, ItemFace, convert_binary_data
 from datetime import date
-import pandas as pd
-from collections import defaultdict
+from busface.spider.parser import download_face, url_to_image
+import busface.model.faceDetector as fd
+import cv2
 
 
 def test_save():
@@ -72,6 +73,34 @@ def test_tags_list():
     for t in tags:
         tags_dict[t] = tags_dict[t][:limit]
     print(tags_dict)
+
+
+def test_download_face():
+    rate_type = RATE_TYPE.USER_RATE
+    rate_value = RATE_VALUE.LIKE
+    page = None
+    items, _ = get_items(
+        rate_type=rate_type, rate_value=rate_value, page=page)
+    assert len(items) > 0
+
+    item = items[0]
+    face = item.faces_dict[0]
+    face_url = face.url
+
+
+    inputImg = url_to_image(face_url)
+
+    h, w = inputImg.shape[:2]
+    scale = 1
+    if h > 600 or w > 800:
+        scale = 600 / max(h, w)
+    dims = (int(w * scale), int(h * scale))
+    interpln = cv2.INTER_LINEAR if scale > 1.0 else cv2.INTER_AREA
+    inputImg = cv2.resize(inputImg, dims, interpolation=interpln)
+    faces = fd.detect_faces_dnn(inputImg)
+    faces
+
+
 
 
 

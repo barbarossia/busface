@@ -8,7 +8,6 @@ from functools import reduce
 import json
 from peewee import *
 from enum import IntEnum
-from collections import defaultdict
 from busface.util import logger, get_data_path, format_datetime, get_now_time, get_full_url
 
 DB_FILE = 'bus.db'
@@ -110,6 +109,25 @@ class Face(BaseModel):
             raise ExistError()
         else:
             return face
+
+    @staticmethod
+    def updateit(face_info):
+        try:
+            face = Face.get_by_id(face_info.id)
+            face.value = face_info.value
+            face.save()
+            logger.debug(f'update face:  {face}')
+        except IntegrityError:
+            logger.debug('face not exists: {face}')
+            raise ExistError()
+        else:
+            return face
+
+
+    @staticmethod
+    def getit(id):
+        face = Face.get_by_id(id)
+        return face
 
 
 class ItemFace(BaseModel):

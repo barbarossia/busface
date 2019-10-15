@@ -7,14 +7,15 @@ from collections import namedtuple
 from requests_html import HTML
 from aspider.routeing import get_router
 import numpy as np
-import urllib
 import cv2
-import urllib3
-from io import StringIO
+import traceback
+import busface.model.faceDetector as fd
+from urllib.request import urlopen
+import urllib.request
 
-from PIL import Image
 
-from skimage import io
+class AppURLopener(urllib.request.FancyURLopener):
+    version = "App/1.7"
 
 
 router = get_router()
@@ -98,31 +99,42 @@ def create_face(face_type, face_value, face_link):
     face = Face(face_type, face_value, face_link)
     return face
 
+async def parse_face(url):
+    inputImg = url_to_image(url)
+    h, w = inputImg.shape[:2]
+    scale = 1
+    if h > 600 or w > 800:
+        scale = 600 / max(h, w)
+    dims = (int(w * scale), int(h * scale))
+    interpln = cv2.INTER_LINEAR if scale > 1.0 else cv2.INTER_AREA
+    inputImg = cv2.resize(inputImg, dims, interpolation=interpln)
+    faces = fd.detect_faces_dnn(inputImg)
+    face = faces[0]
+    x = face[0]
+    y = face[1]
+    w = face[2]
+    h = face[3]
+    img = inputImg[y:y + h, x:x + w]
+    faceImg = img.copy()
 
-def download_face(face_url):
-    with open('pic1.jpg', 'wb') as handle:
-        response = requests.get(face_url, stream=True)
+    img_encode = cv2.imencode('.jpg', faceImg)[1]
+    # print(type(img_encode))
+    blob = img_encode.tobytes()
+    return blob
 
-        if not response.ok:
-            print
-            response
-
-        for block in response.iter_content(1024):
-            if not block:
-                break
-
-            handle.write(block)
-    return handle
-
-
-def url_to_image(url):
+async def url_to_image(url):
     # download the image, convert it to a NumPy array, and then read
     # it into OpenCV format
     # resp = urllib.urlopen(url)
     # image = np.asarray(bytearray(resp.read()), dtype="uint8")
     # image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-
-    image = io.imread(url)
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    try:
+        # image = imutils.url_to_image(url)
+        opener = AppURLopener()
+        response = opener.open(url)
+        image = np.asarray(bytearray(response.read()), dtype="uint8")
+        image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+    except Exception as e:
+        traceback.print_exc()
     # return the image
     return image

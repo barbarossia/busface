@@ -2,7 +2,7 @@ import cv2
 import os
 
 
-path = "C:\\Users\\barbarossia\\busface\\busface\\model"
+path = "C:\\Users\\barbarossia\\source\\repos\\busface\\busface\\model"
 config_path = os.path.join(path, "resnet_ssd_v1.prototxt")
 model_path = os.path.join(path, "resnet_ssd_v1.caffemodel")
 detector = cv2.dnn.readNetFromCaffe(config_path, model_path)

@@ -78,12 +78,12 @@ def parse_item(text):
 
 
     face_list = []
-    face_list.append(create_face('cover', None, cover_img_url))
+    face_list.append(create_face('cover', cover_img_url))
 
-    for sample in samples:
-        links = sample.find('img')[0].attrs['src']
-        face_type = 'sample'
-        face_list.append(create_face(face_type, None, links))
+    # for sample in samples:
+    #     link = sample.find('img')[0].attrs['src']
+    #     face_type = 'sample'
+    #     face_list.append(create_face(face_type, link))
 
     meta['tags'] = tag_list
     return meta, face_list
@@ -94,12 +94,13 @@ def create_tag(tag_type, tag_value):
     return tag
 
 
-def create_face(face_type, face_value, face_link):
+def create_face(face_type, face_link):
     # face_link = router.get_url_path(face_link)
-    face = Face(face_type, face_value, face_link)
+    blob = parse_face(face_link)
+    face = Face(face_type, blob, face_link)
     return face
 
-async def parse_face(url):
+def parse_face(url):
     inputImg = url_to_image(url)
     h, w = inputImg.shape[:2]
     scale = 1
@@ -109,6 +110,8 @@ async def parse_face(url):
     interpln = cv2.INTER_LINEAR if scale > 1.0 else cv2.INTER_AREA
     inputImg = cv2.resize(inputImg, dims, interpolation=interpln)
     faces = fd.detect_faces_dnn(inputImg)
+    if not faces:
+        return None
     face = faces[0]
     x = face[0]
     y = face[1]
@@ -122,7 +125,7 @@ async def parse_face(url):
     blob = img_encode.tobytes()
     return blob
 
-async def url_to_image(url):
+def url_to_image(url):
     # download the image, convert it to a NumPy array, and then read
     # it into OpenCV format
     # resp = urllib.urlopen(url)

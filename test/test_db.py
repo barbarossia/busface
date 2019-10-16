@@ -11,7 +11,7 @@ def test_save():
     item_title = 'test item'
     item_fanhao = 'MADM-116'
     item_release_date = date(2019, 7, 19)
-    item_meta_info = '{"cover_img_url": "https://pics.javcdn.pw/cover/7ben_b.jpg", "length": "170"}'
+    item_meta_info = '{"cover_img_url": "https://pics.javcdn.pw/cover/7btq_b.jpg", "length": "120", "tags": {"star": ["\u6df1\u7530\u3048\u3044\u307f"], "genre": ["\u9ad8\u756b\u8cea", "DMM\u7368\u5bb6", "\u55ae\u9ad4\u4f5c\u54c1", "\u6deb\u8a9e", "\u5993\u5973", "\u53e3\u4ea4", "\u8569\u5a66", "\u5973\u751f"], "\u88fd\u4f5c\u5546:": ["kira\u2606kira"], "\u767c\u884c\u5546:": ["kira\u2606kira BLACK GAL"]}}'
     item = Item(title=item_title, url=item_url, fanhao=item_fanhao,
                 release_date=item_release_date, meta_info=item_meta_info)
     item.save()
@@ -143,13 +143,3 @@ def test_download_items():
     except Exception as e:
         print('system error')
         traceback.print_exc()
-
-
-
-
-
-
-
-
-
-

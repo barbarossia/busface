@@ -5,6 +5,12 @@ from aspider.routeing import get_router
 from busface.spider.parser import parse_item
 from busface.spider.db import save, Item
 from busface.util import APP_CONFIG, get_full_url, logger
+from busface.app.local import add_local_fanhao
+from busface.spider import bus_spider
+from busface.app.schedule import start_scheduler, add_download_job
+import threading
+
+
 router = get_router()
 MAXPAGE = 30
 
@@ -53,19 +59,52 @@ def process_item(text, path, fanhao):
     url = path
     meta, faces = parse_item(text)
     meta.update(url=url)
-#     logger.debug('meta keys', len(meta.keys()))
-#     logger.debug('tag count', len(tags))
+    # logger.debug('meta keys', len(meta.keys()))
+    # logger.debug('faces cout', len(faces))
     save(meta, faces)
     print(f'item {fanhao} is processed')
 
 def test_download():
     print('start download')
-    roots = ['https://www.busdmm.work', ]
+    roots = ['https://www.busdmm.work/', ]
     extra_args = {
         'roots': roots,
         'no_parse_links': False,
-        'count': 10
+        'count': 3
     }
     stats = aspider.download(extra_args=extra_args)
     stats.report()
+
+
+def test_download_fanhao():
+    print('start download')
+    roots = ['https://www.busdmm.work/SNIS-919', ]
+    extra_args = {
+        'roots': roots,
+        'no_parse_links': True
+    }
+    stats = aspider.download(extra_args=extra_args)
+    stats.report()
+
+def test_upload():
+    print('start read from file')
+    with open('./YuaMikami.txt', 'r') as file:
+        fanhao_list = file.read()
+
+    tag_like = 1
+    missed_fanhao, local_file_count, tag_file_count = add_local_fanhao(
+        fanhao_list, tag_like)
+    if len(missed_fanhao) > 0:
+        print('start download')
+        urls = [bus_spider.get_url_by_fanhao(
+            fanhao) for fanhao in missed_fanhao]
+
+        extra_args = {
+            'roots': urls,
+            'no_parse_links': True
+        }
+        stats = aspider.download(extra_args=extra_args)
+        stats.report()
+
+
 

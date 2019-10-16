@@ -80,10 +80,10 @@ def parse_item(text):
     face_list = []
     face_list.append(create_face('cover', cover_img_url))
 
-    # for sample in samples:
-    #     link = sample.find('img')[0].attrs['src']
-    #     face_type = 'sample'
-    #     face_list.append(create_face(face_type, link))
+    for sample in samples:
+         link = sample.find('img')[0].attrs['src']
+         face_type = 'sample'
+         face_list.append(create_face(face_type, link))
 
     meta['tags'] = tag_list
     return meta, face_list
@@ -120,8 +120,10 @@ def parse_face(url):
     img = inputImg[y:y + h, x:x + w]
     faceImg = img.copy()
 
-    img_encode = cv2.imencode('.jpg', faceImg)[1]
-    # print(type(img_encode))
+    grayFace = cv2.cvtColor(faceImg, cv2.COLOR_BGR2GRAY)
+    scaledFace = cv2.resize(grayFace, (32, 32))
+
+    img_encode = cv2.imencode('.jpg', scaledFace)[1]
     blob = img_encode.tobytes()
     return blob
 

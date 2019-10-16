@@ -13,15 +13,6 @@ def test_train():
         rate_type=rate_type, rate_value=rate_value, page=page)
     assert len(items) > 0
 
-    faces = []
-    typeSet = []
-    # for item in items:
-    #     for face in item.faces_dict:
-    #         faces.append(convert_image(face.value))
-    #         if item.item_rate.rate_value == RATE_VALUE.LIKE:
-    #             typeSet.append(1)
-    #         else:
-    #             typeSet.append(0)
     dicts = as_dict(items)
     df = pd.DataFrame(dicts, columns=['id', 'face', 'target'])
     X = df[['face']]
@@ -37,13 +28,14 @@ def test_train():
         traceback.print_exc()
 
 def test_chkType():
-    fanhao = 'IPZ-931'
+    fanhao = 'SNIS-919'
     item = Item.get_by_fanhao(fanhao)
     Item.get_faces_dict(item)
 
     faces = []
     for face in item.faces_dict:
-        faces.append(convert_image(face.value))
+        if face.value is not None:
+            faces.append(convert_image(face.value))
 
     clf = Classify()
     try:
@@ -56,21 +48,23 @@ def test_chkType():
 
 def convert_image(value):
     image = np.asarray(bytearray(value), dtype="uint8")
-    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-    grayFace = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    return grayFace
+    image = cv2.imdecode(image, cv2.COLOR_BGR2GRAY)
+    # grayFace = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    return image
 
 def as_dict(items):
     face_list = []
 
     for item in items:
         for face in item.faces_dict:
-            d = {
-                'id': item.fanhao,
-                'face': convert_image(face.value),
-                'target': item.rate_value
-            }
+            if face.value is not None:
+                d = {
+                    'id': item.fanhao,
+                    'face': convert_image(face.value),
+                    #'face': face.value,
+                    'target': item.rate_value
+                }
 
-            face_list.append(d)
+                face_list.append(d)
 
     return face_list

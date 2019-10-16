@@ -1,15 +1,13 @@
 import cv2
-import os
-from busface.util import get_cwd
+from busface.util import get_model_path
 
-
-path = "busface\model"
-config_path = os.path.join(get_cwd(), path, "resnet_ssd_v1.prototxt")
-model_path = os.path.join(get_cwd(), path, "resnet_ssd_v1.caffemodel")
+config_path = get_model_path("resnet_ssd_v1.prototxt")
+model_path = get_model_path("resnet_ssd_v1.caffemodel")
 detector = cv2.dnn.readNetFromCaffe(config_path, model_path)
 detector.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
 target = (300, 300)
 configConfidence = 50/100
+
 
 def compile_detection_image(input_image):
     image = input_image.copy()

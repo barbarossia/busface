@@ -24,11 +24,7 @@ def get_cwd():
     if getattr(sys, 'frozen', False):
         return sys._MEIPASS
     else:
-        # return "C:\\Users\\barbarossia\\source\\repos\\busface"
-        path = os.getcwd()
-        if TESTING is True:
-            path = dirname(dirname(abspath(__file__)))
-        return path
+        return os.getcwd()
 
 def check_testing():
     global TESTING
@@ -54,6 +50,13 @@ def setup_logging():
 def get_data_path(file):
     cwd = get_cwd()
     file_path = os.path.join(cwd, DATA_PATH, file)
+    return file_path
+
+
+def get_model_path(file):
+    cwd = get_cwd()
+    model_path = os.path.join(DATA_PATH, MODEL_PATH)
+    file_path = os.path.join(cwd, model_path, file)
     return file_path
 
 

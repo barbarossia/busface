@@ -5,6 +5,7 @@ import configparser
 import pytz
 import datetime
 from urllib.parse import urljoin
+from os.path import dirname, abspath
 
 logger = logging.getLogger('busface')
 TESTING = True
@@ -23,7 +24,11 @@ def get_cwd():
     if getattr(sys, 'frozen', False):
         return sys._MEIPASS
     else:
-        return "C:\\Users\\barbarossia\\source\\repos\\busface"
+        # return "C:\\Users\\barbarossia\\source\\repos\\busface"
+        path = os.getcwd()
+        if TESTING is True:
+            path = dirname(dirname(abspath(__file__)))
+        return path
 
 def check_testing():
     global TESTING

@@ -3,7 +3,7 @@ from busface.model.classify import Classify
 import cv2
 import traceback
 import numpy as np
-
+import pandas as pd
 
 def test_train():
     rate_type = RATE_TYPE.USER_RATE
@@ -15,17 +15,20 @@ def test_train():
 
     faces = []
     typeSet = []
-    for item in items:
-        for face in item.faces_dict:
-            faces.append(convert_image(face.value))
-            if item.item_rate.rate_value == RATE_VALUE.LIKE:
-                typeSet.append(1)
-            else:
-                typeSet.append(0)
-
+    # for item in items:
+    #     for face in item.faces_dict:
+    #         faces.append(convert_image(face.value))
+    #         if item.item_rate.rate_value == RATE_VALUE.LIKE:
+    #             typeSet.append(1)
+    #         else:
+    #             typeSet.append(0)
+    dicts = as_dict(items)
+    df = pd.DataFrame(dicts, columns=['id', 'face', 'target'])
+    X = df[['face']]
+    y = df[['target']]
     clf = Classify()
-    clf.setTrainData(faces)
-    clf.setTypeData(typeSet)
+    clf.setTrainData(X.face.values)
+    clf.setTypeData(y.target.values)
     try:
         clf.train()
         clf.saveModule()
@@ -56,3 +59,18 @@ def convert_image(value):
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
     grayFace = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     return grayFace
+
+def as_dict(items):
+    face_list = []
+
+    for item in items:
+        for face in item.faces_dict:
+            d = {
+                'id': item.fanhao,
+                'face': convert_image(face.value),
+                'target': item.rate_value
+            }
+
+            face_list.append(d)
+
+    return face_list

@@ -1,48 +1,58 @@
-import asyncio
-import pytest
-import aiohttp
-from busface.spider.parser import parse_face
+import sys
+from aspider import aspider
+from busface.util import logger, APP_CONFIG
 from aspider.routeing import get_router
-from busface.spider.db import get_items, Item, RATE_TYPE, RATE_VALUE, ItemRate, LocalItem, Face, ItemFace, convert_binary_data
-import time
+from busface.spider.parser import parse_item
+from busface.spider.db import save, Item, ItemRate, RATE_TYPE, RATE_VALUE
+from busface.util import APP_CONFIG, get_full_url, logger
+from busface.app.local import add_local_fanhao
+from busface.spider import bus_spider
+from busface.app.schedule import start_scheduler, add_download_job
+import threading
 import traceback
-
-async def process(face, blob):
-    start = time.perf_counter()
-    face.value = blob
-    Face.updateit(face)
-    end = time.perf_counter() - start
-    print(f"-->Chained result took {end:0.2f} seconds).")
+import re
 
 
-async def process_face(face):
-    start = time.perf_counter()
-    blob = await parse_face(face.url)
-    # save = await process(face, blob)
-    end = time.perf_counter() - start
-    print(f"-->Chained result took {end:0.2f} seconds).")
+router = get_router()
+MAXPAGE = 30
+
+root_url = ['https://www.cdnbus.bid/page/2', ]
 
 
-async def main(face_list):
-    await asyncio.gather(process_face(n) for n in face_list)
+@router.route('/cover/<img>')
+def process_image(text, path, img):
+    '''
+    process item page
+    '''
+    logger.debug(f'process image {text}')
+    logger.debug(f'process image {path}')
+    logger.debug(f'process image {img}')
+    print(f'image {img} is processed')
+
+@router.route('/page/<no>')
+def process_page(text, path, no):
+    '''
+    process list page
+    '''
+    logger.debug(f'page {no} has length {len(text)}')
+    print(f'process page {no}')
+
+def test_download_fanhao():
+    print('start download')
+    roots = root_url
+    extra_args = {
+        'roots': roots,
+        'no_parse_links': False,
+        'count': 10
+    }
+    stats = aspider.download(extra_args=extra_args)
+    stats.report()
 
 
-def test_download_items():
-    rate_type = RATE_TYPE.USER_RATE
-    rate_value = RATE_VALUE.LIKE
-    page = None
-    items, _ = get_items(
-        rate_type=rate_type, rate_value=rate_value, page=page)
-    assert len(items) > 0
-    face_list = []
-    for item in items:
-        for face in item.faces_dict:
-            face_list.append(face)
-    try:
-        asyncio.run(main(face_list))
-    except Exception as e:
-        print('system error')
-        traceback.print_exc()
-
+def test_match():
+    pattern = '[\w]+_b.jpg'
+    path = '79te_b.jpg'
+    match = re.match(pattern, path)
+    match
 
 

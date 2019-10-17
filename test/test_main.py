@@ -3,7 +3,7 @@ from aspider import aspider
 from busface.util import logger, APP_CONFIG
 from aspider.routeing import get_router
 from busface.spider.parser import parse_item
-from busface.spider.db import save, Item
+from busface.spider.db import save, Item, ItemRate, RATE_TYPE, RATE_VALUE
 from busface.util import APP_CONFIG, get_full_url, logger
 from busface.app.local import add_local_fanhao
 from busface.spider import bus_spider
@@ -78,7 +78,7 @@ def test_download():
 
 def test_download_fanhao():
     print('start download')
-    roots = ['https://www.busdmm.work/SNIS-919', ]
+    roots = ['https://www.busdmm.work/YSN-484', ]
     extra_args = {
         'roots': roots,
         'no_parse_links': True
@@ -86,9 +86,17 @@ def test_download_fanhao():
     stats = aspider.download(extra_args=extra_args)
     stats.report()
 
+
+def test_tagit():
+    fanhao = 'UMSO-274'
+    # item_rate = ItemRate.get_by_fanhao(fanhao)
+    rate_type = RATE_TYPE.USER_RATE
+    rate_value = RATE_VALUE.DISLIKE
+    ItemRate.saveit(rate_type, rate_value, fanhao)
+
 def test_upload():
     print('start read from file')
-    with open('./YuaMikami.txt', 'r') as file:
+    with open('./Aizawa.txt', 'r') as file:
         fanhao_list = file.read()
 
     tag_like = 1

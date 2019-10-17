@@ -27,8 +27,26 @@ def test_train():
         print('system error')
         traceback.print_exc()
 
-def test_chkType():
-    fanhao = 'SNIS-919'
+def test_chkType_like():
+    fanhao = 'IPX-358'
+    item = Item.get_by_fanhao(fanhao)
+    Item.get_faces_dict(item)
+
+    faces = []
+    for face in item.faces_dict:
+        if face.value is not None:
+            faces.append(convert_image(face.value))
+
+    clf = Classify()
+    try:
+        arr = clf.chkType(faces)
+        assert len(arr) > 0
+    except Exception as e:
+        print('system error')
+        traceback.print_exc()
+
+def test_chkType_dislike():
+    fanhao = 'YSN-484'
     item = Item.get_by_fanhao(fanhao)
     Item.get_faces_dict(item)
 

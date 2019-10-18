@@ -16,7 +16,7 @@ import re
 router = get_router()
 MAXPAGE = 30
 
-root_url = ['https://www.cdnbus.bid/page/2', ]
+root_url = ['https://www.busdmm.work/YSN-484', 'https://pics.javcdn.pw']
 
 
 @router.route('/cover/<img>')
@@ -29,13 +29,13 @@ def process_image(text, path, img):
     logger.debug(f'process image {img}')
     print(f'image {img} is processed')
 
-@router.route('/page/<no>')
-def process_page(text, path, no):
+@router.route('/<fanhao:[\w]+-[\d]+>')
+def process_item(text, path, fanhao):
     '''
-    process list page
+    process item page
     '''
-    logger.debug(f'page {no} has length {len(text)}')
-    print(f'process page {no}')
+    print(f'item {fanhao} is processed')
+
 
 def test_download_fanhao():
     print('start download')

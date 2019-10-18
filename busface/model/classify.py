@@ -30,9 +30,9 @@ class Classify:
         newX = []
         faceCnt = 0
         for x in faceData:
-            if isTrain == True:  # 训练时显示进度，推荐时不需要
-                faceCnt += 1
-                print("%.2f%%" % (faceCnt * 100 / len(faceData)))
+            # if isTrain == True:  # 训练时显示进度，推荐时不需要
+            #     faceCnt += 1
+            #     print("%.2f%%" % (faceCnt * 100 / len(faceData)))
             dim2X = self.tsne.fit_transform(x)
             newX.append(dim2X.mean(axis=0))
         return newX

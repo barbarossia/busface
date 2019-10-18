@@ -4,6 +4,8 @@ import cv2
 import traceback
 import numpy as np
 import pandas as pd
+import re
+from busface.util import logger
 
 def test_train():
     rate_type = RATE_TYPE.USER_RATE
@@ -27,26 +29,55 @@ def test_train():
         print('system error')
         traceback.print_exc()
 
-def test_chkType_like():
-    fanhao = 'IPX-358'
-    item = Item.get_by_fanhao(fanhao)
-    Item.get_faces_dict(item)
 
+def get_faces(items):
     faces = []
-    for face in item.faces_dict:
-        if face.value is not None:
-            faces.append(convert_image(face.value))
+    rows = items.splitlines()
+    fanhao_list = []
+    pattern = r'([A-Z]+)-?([0-9]+)'
+    for row in rows:
+        if ',' in row:
+            fanhao, _ = row.split(',')
+        else:
+            fanhao = row
+        fanhao = fanhao.strip().upper()
+        match = re.search(pattern, fanhao)
+        if match and len(match.groups()) == 2:
+            series, num = match.groups()
+            matched_fanhao = f'{series}-{num}'
+            fanhao_list.append((matched_fanhao))
+
+
+    for item_id in fanhao_list:
+        item = Item.get_by_fanhao(item_id)
+        if item is not None:
+            Item.get_faces_dict(item)
+            for face in item.faces_dict:
+                if face.value is not None:
+                    faces.append(convert_image(face.value))
+    return faces
+
+def test_chkType_like():
+    with open('./Hashimoto.txt', 'r') as file:
+        fanhao_list = file.read()
+    faces = get_faces(fanhao_list)
 
     clf = Classify()
     try:
-        arr = clf.chkType(faces)
-        assert len(arr) > 0
+        result = clf.chkType(faces)
+        expect = [1] * len(faces)
+
+        logger.debug(' ,'.join(map(str, expect)))
+        logger.debug(' ,'.join(map(str, result)))
+
+        compare = [i for i, j in zip(expect, result) if i == j]
+        logger.debug(' ,'.join(map(str, compare)))
     except Exception as e:
         print('system error')
         traceback.print_exc()
 
 def test_chkType_dislike():
-    fanhao = 'YSN-484'
+    fanhao = 'SORA-236'
     item = Item.get_by_fanhao(fanhao)
     Item.get_faces_dict(item)
 
@@ -58,7 +89,7 @@ def test_chkType_dislike():
     clf = Classify()
     try:
         result = clf.chkType(faces)
-        assert len(result) > 0
+        assert result[0] == 0
     except Exception as e:
         print('system error')
         traceback.print_exc()

@@ -3,7 +3,7 @@ from aspider import aspider
 from busface.util import logger, APP_CONFIG
 from aspider.routeing import get_router
 from busface.spider.parser import parse_item
-from busface.spider.db import save, Item, ItemRate, RATE_TYPE, RATE_VALUE
+from busface.spider.db import save, Item, ItemRate, RATE_TYPE, RATE_VALUE, get_items
 from busface.util import APP_CONFIG, get_full_url, logger
 from busface.app.local import add_local_fanhao
 from busface.spider import bus_spider
@@ -66,11 +66,11 @@ def process_item(text, path, fanhao):
 
 def test_download():
     print('start download')
-    roots = ['https://www.busdmm.work/', ]
+    roots = ['https://www.cdnbus.bid', ]
     extra_args = {
         'roots': roots,
         'no_parse_links': False,
-        'count': 3
+        'count': 100
     }
     stats = aspider.download(extra_args=extra_args)
     stats.report()
@@ -94,12 +94,24 @@ def test_tagit():
     rate_value = RATE_VALUE.DISLIKE
     ItemRate.saveit(rate_type, rate_value, fanhao)
 
+def test_tagit_all():
+    rate_type = None
+    rate_value = None
+    page = None
+    items, _ = get_items(
+        rate_type=rate_type, rate_value=rate_value, page=page)
+    for item in items:
+        fanhao = item.fanhao
+        rate_type = RATE_TYPE.USER_RATE
+        rate_value = RATE_VALUE.DISLIKE
+        ItemRate.saveit(rate_type, rate_value, fanhao)
+
 def test_upload():
     print('start read from file')
-    with open('./Aizawa.txt', 'r') as file:
+    with open('./YuaMikami.txt', 'r') as file:
         fanhao_list = file.read()
 
-    tag_like = 1
+    tag_like = RATE_VALUE.LIKE
     missed_fanhao, local_file_count, tag_file_count = add_local_fanhao(
         fanhao_list, tag_like)
     if len(missed_fanhao) > 0:

@@ -108,7 +108,7 @@ def test_tagit_all():
 
 def test_upload():
     print('start read from file')
-    with open('./YuaMikami.txt', 'r') as file:
+    with open('./Tsubasa.txt', 'r') as file:
         fanhao_list = file.read()
 
     tag_like = RATE_VALUE.LIKE

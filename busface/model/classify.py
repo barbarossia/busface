@@ -4,37 +4,41 @@ from sklearn import manifold
 from sklearn.externals import joblib
 from busface.util import get_cwd
 import os
+from sklearn.decomposition import PCA
+import numpy as np
 
 class Classify:
-    X = []  # 训练数据集
-    y = []  # 类型数据集
+    X = np.zeros(2, )
+    y = np.zeros(5)
     clsf = None
     tsne = None
     path = "data\model"
     model_file = os.path.join(get_cwd(), path, "train.mdl")
+
+
 
     def __init__(self):
         self.clsf = svm.SVC(gamma='scale')
         self.tsne = manifold.TSNE(n_components=2, init='pca', random_state=0)
 
     def setTrainData(self, trainData):
-        for t in trainData:
-            self.X.append(t)
+    #     for t in trainData:
+    #         self.X.append(t)
+        self.X = trainData
 
     def setTypeData(self, typeData):
-        for t in typeData:
-            self.y.append(t)
+        #for t in typeData:
+        #    self.y.append(t)
+        self.y = typeData
 
     # 降维处理
     def dimentionTransform(self, faceData, isTrain=False):
         newX = []
         faceCnt = 0
-        for x in faceData:
-            # if isTrain == True:  # 训练时显示进度，推荐时不需要
-            #     faceCnt += 1
-            #     print("%.2f%%" % (faceCnt * 100 / len(faceData)))
-            dim2X = self.tsne.fit_transform(x)
-            newX.append(dim2X.mean(axis=0))
+        n_components = 150
+        pca = PCA(n_components=n_components, svd_solver='randomized',
+                  whiten=True).fit(faceData)
+        newX = pca.transform(faceData)
         return newX
 
     def train(self):

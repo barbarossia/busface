@@ -44,7 +44,7 @@ def parse_item(text):
     release_date = tags[1].text
     length = tags[2].text
 
-    sample_img_css = 'body > div.container > #sample-waterfall > a.sample-box > div.photo-frame'
+    sample_img_css = 'body > div.container > #sample-waterfall > a.sample-box'
     samples = html.find(sample_img_css)
 
     # meta data
@@ -78,12 +78,16 @@ def parse_item(text):
 
 
     face_list = []
-    face_list.append(create_face('cover', cover_img_url))
+    cover = create_face('cover', cover_img_url)
+    if cover is not None:
+        face_list.append(cover)
 
-    #for sample in samples:
-    #     link = sample.find('img')[0].attrs['src']
-    #     face_type = 'sample'
-    #     face_list.append(create_face(face_type, link))
+    for sample in samples:
+         link = sample.attrs['href']
+         face_type = 'sample'
+         sample_face = create_face(face_type, link)
+         if sample_face is not None:
+            face_list.append(sample_face)
 
     meta['tags'] = tag_list
     return meta, face_list
@@ -97,18 +101,93 @@ def create_tag(tag_type, tag_value):
 def create_face(face_type, face_link):
     # face_link = router.get_url_path(face_link)
     blob = parse_face(face_link)
+    if blob is None: return None
     face = Face(face_type, blob, face_link)
     return face
 
+def up_scale_face(oriimg, old_size):
+    desired_size_w = 37
+    desired_size_h = 50
+    ratio = float(desired_size_w) / old_size[1]
+    new_size = tuple([int(x * ratio) for x in old_size])
+
+    # new_size should be in (width, height) format
+
+    oriimg = cv2.resize(oriimg, (new_size[1], new_size[0]))
+
+    delta_w = desired_size_w - new_size[1]
+    delta_h = desired_size_h - new_size[0]
+
+    top, bottom = delta_h // 2, delta_h - (delta_h // 2)
+    left, right = delta_w // 2, delta_w - (delta_w // 2)
+
+    color = [0, 0, 0]
+    new_img = cv2.copyMakeBorder(oriimg, top, bottom, left, right, cv2.BORDER_CONSTANT,
+                                 value=color)
+
+    return new_img
+
+
+def down_scale_face(oriimg, old_size):
+    desired_size_w = 37
+    desired_size_h = 50
+
+    # new_size should be in (width, height) format
+
+    delta_w = desired_size_w - old_size[1]
+    delta_h = desired_size_h - old_size[0]
+
+    top, bottom = delta_h // 2, delta_h - (delta_h // 2)
+    left, right = delta_w // 2, delta_w - (delta_w // 2)
+
+    color = [0, 0, 0]
+    new_img = cv2.copyMakeBorder(oriimg, top, bottom, left, right, cv2.BORDER_CONSTANT,
+                                 value=color)
+
+    return new_img
+
+def resize_face(oriimg):
+
+    desired_size_w = 37
+    desired_size_h = 50
+    old_size = oriimg.shape[:2]  # old_size is in (height, width) format
+
+    if old_size[0] > 50:
+        oriimg = pre_resize_face_h(oriimg)
+
+    old_size = oriimg.shape[:2]  # old_size is in (height, width) format
+    if old_size[1] > 37:
+        oriimg = pre_resize_face_w(oriimg)
+
+    old_size = oriimg.shape[:2]  # old_size is in (height, width) format
+    if old_size[0] < desired_size_h or old_size[1] < desired_size_w:
+        return down_scale_face(oriimg, old_size)
+    elif old_size[0] == desired_size_h and old_size[1] == desired_size_w:
+        return oriimg
+    else:
+        return up_scale_face(oriimg, old_size)
+
+def pre_resize_face_h(img):
+    h, w = img.shape[:2]
+    scale = 1
+    if h > 50:
+        scale = 50 / h
+    dims = (int(w * scale), 50)
+    new_img = cv2.resize(img, dims, interpolation=cv2.INTER_AREA)
+    return new_img
+
+def pre_resize_face_w(img):
+    h, w = img.shape[:2]
+    scale = 1
+    if w > 37:
+        scale = 37 / w
+    dims = (37, int(h * scale))
+    new_img = cv2.resize(img, dims, interpolation=cv2.INTER_AREA)
+    return new_img
+
 def parse_face(url):
     inputImg = url_to_image(url)
-    h, w = inputImg.shape[:2]
-    scale = 1
-    if h > 600 or w > 800:
-        scale = 600 / max(h, w)
-    dims = (int(w * scale), int(h * scale))
-    interpln = cv2.INTER_LINEAR if scale > 1.0 else cv2.INTER_AREA
-    inputImg = cv2.resize(inputImg, dims, interpolation=interpln)
+
     faces = fd.detect_faces_dnn(inputImg)
     if not faces:
         return None
@@ -117,13 +196,17 @@ def parse_face(url):
     y = face[1]
     w = face[2]
     h = face[3]
+
+    if x < 0 or y < 0 or w < 0 or h < 0:
+        return None
+
     img = inputImg[y:y + h, x:x + w]
     faceImg = img.copy()
 
-    grayFace = cv2.cvtColor(faceImg, cv2.COLOR_BGR2GRAY)
+    # grayFace = cv2.cvtColor(faceImg, cv2.COLOR_BGR2GRAY)
     # scaledFace = cv2.resize(grayFace, (32, 32))
-
-    img_encode = cv2.imencode('.jpg', grayFace)[1]
+    resized_face = resize_face(faceImg)
+    img_encode = cv2.imencode('.jpg', resized_face)[1]
     blob = img_encode.tobytes()
     return blob
 
@@ -141,5 +224,6 @@ def url_to_image(url):
         image = cv2.imdecode(image, cv2.IMREAD_COLOR)
     except Exception as e:
         traceback.print_exc()
+        return None
     # return the image
     return image

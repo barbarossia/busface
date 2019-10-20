@@ -8,11 +8,11 @@ router = get_router()
 
 def test_process_item():
     root_path = 'https://www.busdmm.work'
-    url = 'https://www.busdmm.work/LD-012'
+    url = 'https://www.busdmm.work/SSNI-452'
     session = HTMLSession()
     router = get_router()
     router.add_root_path(root_path)
-    fanhao = 'LD-012'
+    fanhao = 'SSNI-452'
     r = session.get(url)
     process_item(r.text, url, fanhao)
 

@@ -41,8 +41,7 @@
 			<span class="badge badge-warning">{{t}}</span>
 			% end
 			</div>
-
-			</div>
+		</div>
 		<div class="col-5 col-md-3  align-self-center">
 		<input type=hidden name="formid" value="form-{{i}}">
 % if like is None or like == 0:

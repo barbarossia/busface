@@ -150,6 +150,12 @@ class ItemFace(BaseModel):
         else:
             return item_face
 
+    @staticmethod
+    def removeit(item, face):
+        ItemFace.delete().where(
+            (ItemFace.item == item.fanhao) &
+            (ItemFace.face == face.id)).execute()
+
     def __repr__(self):
         return f'<ItemFace {self.item.fanhao} - {self.face.value}>'
 
@@ -254,6 +260,12 @@ def save(meta_info, faces):
         with db.atomic():
             for face_obj in face_objs:
                 ItemFace.saveit(item, face_obj)
+
+def remove_face(meta_info, face):
+    with db.atomic():
+        ItemFace.removeit(meta_info, face)
+    with db.atomic():
+        face.delete_by_id(face.id)
 
 
 def get_items(rate_type=None, rate_value=None, page=1, page_size=10):

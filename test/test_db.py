@@ -1,4 +1,4 @@
-from busface.spider.db import get_items, Item, RATE_TYPE, RATE_VALUE, ItemRate, LocalItem, Face, ItemFace, convert_binary_data
+from busface.spider.db import get_items, Item, RATE_TYPE, RATE_VALUE, ItemRate, LocalItem, Face, ItemFace, convert_binary_data, remove_face
 from datetime import date
 from busface.spider.parser import parse_face, url_to_image
 import busface.model.faceDetector as fd
@@ -143,3 +143,11 @@ def test_download_items():
     except Exception as e:
         print('system error')
         traceback.print_exc()
+
+def test_remove_face():
+    fanhao = 'SSNI-589'
+    item = Item.get_by_fanhao(fanhao)
+    Item.get_faces_dict(item)
+    face_to_remove = item.faces_dict[1]
+    remove_face(item, face_to_remove)
+

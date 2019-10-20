@@ -52,6 +52,16 @@ def index():
     msg = f'今日更新 {today_update_count} , 今日推荐 {today_recommend_count}'
     return template('index', items=items, page_info=page_info, like=rate_value, path=request.path, msg=msg)
 
+@route('/faceit')
+def faceit():
+    rate_type = RATE_TYPE.USER_RATE
+    rate_value = RATE_VALUE.LIKE
+    page = int(request.query.get('page', 1))
+    items, page_info = get_items(
+        rate_type=rate_type, rate_value=rate_value, page=page)
+    for item in items:
+        _remove_extra_tags(item)
+    return template('faceit', items=items, page_info=page_info, like=rate_value, path=request.path)
 
 @route('/tagit')
 def tagit():
@@ -206,8 +216,8 @@ app = bottle.default_app()
 
 
 def start_app():
-    t = threading.Thread(target=start_scheduler)
-    t.start()
+    #t = threading.Thread(target=start_scheduler)
+    #t.start()
     run(host='0.0.0.0', port=8000, debug=True)
     # run(host='0.0.0.0', port=8000, debug=True, reloader=False)
 

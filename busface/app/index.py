@@ -6,6 +6,9 @@ import os
 import bottle
 from multiprocessing import freeze_support
 from bottle import route, run, template, static_file, request, response, redirect, hook
+import numpy as np
+from base64 import b64encode
+
 
 dirname = os.path.dirname(os.path.realpath(__file__))
 if getattr(sys, 'frozen', False):
@@ -37,6 +40,23 @@ def _remove_extra_tags(item):
     for t in tags:
         tags_dict[t] = tags_dict[t][:limit]
 
+def get_faces(item):
+    faces = []
+
+    for face in item.faces_dict:
+        d = {
+            'url': face.url,
+            'id': face.id,
+            'image': read_image(face.value)
+        }
+        faces.append(d)
+
+    return faces
+
+def read_image(value):
+    image = b64encode(value).decode("utf-8")
+    return image
+
 
 @route('/')
 def index():
@@ -52,16 +72,33 @@ def index():
     msg = f'今日更新 {today_update_count} , 今日推荐 {today_recommend_count}'
     return template('index', items=items, page_info=page_info, like=rate_value, path=request.path, msg=msg)
 
-@route('/faceit')
-def faceit():
-    rate_type = RATE_TYPE.USER_RATE
-    rate_value = RATE_VALUE.LIKE
+@route('/faceit/<fanhao>')
+def faceit(fanhao):
+    item = Item.get_by_fanhao(fanhao)
+    Item.get_faces_dict(item)
+    faces = get_faces(item)
+    return template('faceit', fanhao=fanhao, items=faces, like=1, path=request.path)
+
+@route('/face/<fanhao>', method='POST')
+def face(fanhao):
+    if request.POST.submit:
+        formid = request.POST.formid
+        faceid = request.POST.faceid
+
+        item = Item.get_by_fanhao(fanhao)
+        face_to_remove = Face.getit(faceid)
+        remove_face(item, face_to_remove)
+
+        logger.debug(f'remove face for fanhao:{fanhao}')
+
     page = int(request.query.get('page', 1))
-    items, page_info = get_items(
-        rate_type=rate_type, rate_value=rate_value, page=page)
-    for item in items:
-        _remove_extra_tags(item)
-    return template('faceit', items=items, page_info=page_info, like=rate_value, path=request.path)
+    like = request.query.get('like')
+    url = f'/faceit/{fanhao}?like={like}'
+    if formid:
+        url += f'#{formid}'
+    redirect(url)
+
+
 
 @route('/tagit')
 def tagit():
@@ -230,7 +267,7 @@ if __name__ == "__main__":
         # import busface.model.classifier as clf
         from busface.util import logger, get_cwd, get_now_time, get_data_path
         from busface.spider.db import (get_items, get_local_items, RATE_TYPE, RATE_VALUE, ItemRate,
-                                      Item, LocalItem, DBError, db as dbconn)
+                                      Item, LocalItem, DBError, db as dbconn, Face, remove_face)
         from busface.spider import db
         from busface.app.schedule import start_scheduler, add_download_job
         from busface.spider import bus_spider

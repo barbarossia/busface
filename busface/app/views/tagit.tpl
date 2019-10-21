@@ -41,7 +41,7 @@
 			<span class="badge badge-warning">{{t}}</span>
 			% end
 			</div>
-			<a class="nav-link" href="/faceit/{{item.fanhao}}">Check faces</a>
+			<a class="nav-link" href="/faceit/{{item.fanhao}}?page={{curr_page}}&like={{like}}">Check faces</a>
 		</div>
 		<div class="col-5 col-md-3  align-self-center">
 		<input type=hidden name="formid" value="form-{{i}}">

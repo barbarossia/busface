@@ -9,7 +9,13 @@ from busface.app.local import add_local_fanhao
 from busface.spider import bus_spider
 from busface.app.schedule import start_scheduler, add_download_job
 import threading
+import os
+from busface.util import get_cwd
 
+
+DATA_PATH = 'data/'
+MODEL_PATH = 'model/'
+model_path = os.path.join(get_cwd(), DATA_PATH, MODEL_PATH)
 
 router = get_router()
 MAXPAGE = 30
@@ -105,6 +111,8 @@ def test_tagit_all():
         rate_type = RATE_TYPE.USER_RATE
         rate_value = RATE_VALUE.DISLIKE
         ItemRate.saveit(rate_type, rate_value, fanhao)
+
+
 
 def test_upload():
     print('start read from file')

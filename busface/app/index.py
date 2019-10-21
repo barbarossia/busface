@@ -74,17 +74,18 @@ def index():
 
 @route('/faceit/<fanhao>')
 def faceit(fanhao):
+    like = request.query.get('like', None)
+    page = request.query.get('page', 1)
     item = Item.get_by_fanhao(fanhao)
     Item.get_faces_dict(item)
     faces = get_faces(item)
-    return template('faceit', fanhao=fanhao, items=faces, like=1, path=request.path)
+    return template('faceit', fanhao=fanhao, items=faces, page=page, like=like, path=request.path)
 
 @route('/face/<fanhao>', method='POST')
 def face(fanhao):
     if request.POST.submit:
-        formid = request.POST.formid
         faceid = request.POST.faceid
-
+        formid = request.POST.formid
         item = Item.get_by_fanhao(fanhao)
         face_to_remove = Face.getit(faceid)
         remove_face(item, face_to_remove)
@@ -93,7 +94,8 @@ def face(fanhao):
 
     page = int(request.query.get('page', 1))
     like = request.query.get('like')
-    url = f'/faceit/{fanhao}?like={like}'
+
+    url = f'/faceit/{fanhao}?page={page}&like={like}'
     if formid:
         url += f'#{formid}'
     redirect(url)

@@ -67,7 +67,7 @@ def process_item(text, path, fanhao):
     meta.update(url=url)
     # logger.debug('meta keys', len(meta.keys()))
     # logger.debug('faces cout', len(faces))
-    # save(meta, faces)
+    save(meta, faces)
     print(f'item {fanhao} is processed')
 
 

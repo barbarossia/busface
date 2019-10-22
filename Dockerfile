@@ -7,10 +7,6 @@ RUN apt-get -o Acquire::Check-Valid-Until=false update \
     && apt-get install \
     --no-install-recommends --yes \
     build-essential libpq-dev cron git \
-    libglib2.0-0 --yes \
-    libsm6 --yes \
-    libxext6 --yes \
-    libxrender-dev --yes \
     python3-dev --yes
 
 FROM base as build
@@ -25,7 +21,7 @@ RUN pip download --destination-directory /install -r /app/requirements.txt
 
 FROM python:3.7.4-slim  as release
 
-RUN apt-get update && apt-get -y install cron git
+RUN apt-get update && apt-get -y install cron git libglib2.0-0 libsm6 libxext6 libxrender-dev
 
 WORKDIR /app
 

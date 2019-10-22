@@ -5,4 +5,4 @@ cd /app
 echo `pwd`
 
 # ${PYTHON} -m bustag.app.index
-${PYTHON} -m bustag.sample
+${PYTHON} -m busface.sample

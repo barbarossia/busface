@@ -6,10 +6,15 @@ WORKDIR /app
 RUN apt-get -o Acquire::Check-Valid-Until=false update \
     && apt-get install \
     --no-install-recommends --yes \
-    build-essential libpq-dev cron git \
+    build-essential libpq-dev cron git libglib2.0-0 \
+    libsm6 --yes \
+    libxext6 --yes \
+    libxrender-dev --yes \
     python3-dev --yes
 
 FROM base as build
+
+COPY . /app
 
 COPY requirements.txt .
 
@@ -28,6 +33,8 @@ COPY --from=build /install /install
 COPY requirements.txt .
 
 RUN pip install --no-index --find-links=/install -r requirements.txt
+
+COPY busface /app/busface
 
 RUN mkdir /app/docker
 

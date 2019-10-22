@@ -6,7 +6,8 @@ WORKDIR /app
 RUN apt-get -o Acquire::Check-Valid-Until=false update \
     && apt-get install \
     --no-install-recommends --yes \
-    build-essential libpq-dev cron git libglib2.0-0 \
+    build-essential libpq-dev cron git \
+    libglib2.0-0 --yes \
     libsm6 --yes \
     libxext6 --yes \
     libxrender-dev --yes \
@@ -48,6 +49,6 @@ RUN chmod 755 /app/docker/*.sh
 
 EXPOSE 8000
 
-LABEL maintainer="barbarossia <barbarossiia@gmail.com>"
+LABEL maintainer="barbarossia <barbarossia@gmail.com>"
 
 CMD ["/app/docker/entry.sh"]

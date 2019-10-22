@@ -12,6 +12,7 @@ import traceback
 import busface.model.faceDetector as fd
 from urllib.request import urlopen
 import urllib.request
+from busface.util import logger, APP_CONFIG
 
 
 class AppURLopener(urllib.request.FancyURLopener):
@@ -23,8 +24,8 @@ router = get_router()
 Tag = namedtuple('Tag', ['type', 'value'])
 Face = namedtuple('Face', ['type', 'value', 'link'])
 
-DESIRED_SIZE_W = 37
-DESIRED_SIZE_H = 50
+DESIRED_SIZE_W = APP_CONFIG['image.crop_width']
+DESIRED_SIZE_H = APP_CONFIG['image.crop_height']
 
 def parse_item(text):
     '''

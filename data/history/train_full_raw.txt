@@ -1,0 +1,36 @@
+Total dataset size:
+n_samples: 2111
+n_features: 7400
+n_classes: 6
+Extracting the top 600 eigenfaces from 1583 faces
+done in 10.541s
+Projecting the input data on the eigenfaces orthonormal basis
+done in 0.969s
+Fitting the classifier to the training set
+done in 475.366s
+Best estimator found by grid search:
+SVC(C=1000.0, cache_size=200, class_weight='balanced', coef0=0.0,
+    decision_function_shape='ovr', degree=3, gamma=0.005, kernel='rbf',
+    max_iter=-1, probability=False, random_state=None, shrinking=True,
+    tol=0.001, verbose=False)
+Predicting people's names on the test set
+done in 0.771s
+              precision    recall  f1-score   support
+
+      Aizawa       0.38      0.20      0.27        64
+       Asuka       0.47      0.60      0.53       131
+   Hashimoto       0.25      0.72      0.37        92
+   Takahashi       0.97      0.48      0.64        77
+     Tsubasa       0.85      0.12      0.22        88
+   YuaMikami       0.71      0.07      0.12        76
+
+    accuracy                           0.40       528
+   macro avg       0.61      0.37      0.36       528
+weighted avg       0.59      0.40      0.37       528
+
+[[13  9 38  1  2  1]
+ [ 7 79 45  0  0  0]
+ [ 4 22 66  0  0  0]
+ [ 0 10 29 37  0  1]
+ [ 9 29 39  0 11  0]
+ [ 1 20 50  0  0  5]]

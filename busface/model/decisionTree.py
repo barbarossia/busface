@@ -8,6 +8,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.decomposition import PCA
 from prepare import create_lfw
 from sklearn import tree
+from busface.util import  APP_CONFIG
 
 
 print(__doc__)
@@ -51,7 +52,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 # #############################################################################
 # Compute a PCA (eigenfaces) on the face dataset (treated as unlabeled
 # dataset): unsupervised feature extraction / dimensionality reduction
-n_components = 100
+n_components = int(APP_CONFIG['sample.n_components'])
 
 print("Extracting the top %d eigenfaces from %d faces"
       % (n_components, X_train.shape[0]))
@@ -84,6 +85,9 @@ print("done in %0.3fs" % (time() - t0))
 print("Predicting people's names on the test set")
 t0 = time()
 y_pred = clf.predict(X_test_pca)
+score = clf.predict_proba(X_test_pca)[:,1]
+print('score')
+print(score)
 print("done in %0.3fs" % (time() - t0))
 
 print(classification_report(y_test, y_pred, target_names=target_names))
@@ -115,12 +119,14 @@ def title(y_pred, y_test, target_names, i):
 prediction_titles = [title(y_pred, y_test, target_names, i)
                      for i in range(y_pred.shape[0])]
 
-plot_gallery(X_test, prediction_titles, h, w)
+# plot_gallery(X_test, prediction_titles, h, w)
 
 # plot the gallery of the most significative eigenfaces
 
 eigenface_titles = ["eigenface %d" % i for i in range(eigenfaces.shape[0])]
-plot_gallery(eigenfaces, eigenface_titles, h, w)
+# plot_gallery(eigenfaces, eigenface_titles, h, w)
 
-plt.show()
+# plt.show()
+
+
 

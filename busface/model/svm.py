@@ -10,6 +10,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.decomposition import PCA
 from sklearn.svm import SVC
 from prepare import create_lfw
+from busface.util import  APP_CONFIG
 
 
 print(__doc__)
@@ -53,7 +54,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 # #############################################################################
 # Compute a PCA (eigenfaces) on the face dataset (treated as unlabeled
 # dataset): unsupervised feature extraction / dimensionality reduction
-n_components = 100
+n_components = int(APP_CONFIG['sample.n_components'])
 
 print("Extracting the top %d eigenfaces from %d faces"
       % (n_components, X_train.shape[0]))

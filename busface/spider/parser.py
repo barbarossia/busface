@@ -24,8 +24,8 @@ router = get_router()
 Tag = namedtuple('Tag', ['type', 'value'])
 Face = namedtuple('Face', ['type', 'value', 'link'])
 
-DESIRED_SIZE_W = int(APP_CONFIG['image.crop_width'])
-DESIRED_SIZE_H = int(APP_CONFIG['image.crop_height'])
+DESIRED_SIZE_W = int(APP_CONFIG['sample.crop_width'])
+DESIRED_SIZE_H = int(APP_CONFIG['sample.crop_height'])
 
 def parse_item(text):
     '''

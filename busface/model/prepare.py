@@ -1,5 +1,4 @@
 from busface.spider.db import get_items, Item, RATE_TYPE, RATE_VALUE, ItemRate, LocalItem, Face, ItemFace, convert_binary_data
-from busface.model.classify import Classify
 import cv2
 import traceback
 import numpy as np
@@ -11,24 +10,6 @@ from busface.util import get_cwd
 DATA_PATH = 'data/'
 MODEL_PATH = 'model/'
 model_path = os.path.join(get_cwd(), DATA_PATH, MODEL_PATH)
-
-def process_data(df):
-    '''
-    do all processing , like onehotencode tag string
-    '''
-    X = df[['tags']]
-    y = df[['target']]
-
-    clf = Classify()
-    clf.setTrainData(X.face.values)
-    clf.setTypeData(y.target.values)
-    try:
-        clf.train()
-        clf.saveModule()
-    except Exception as e:
-        print('system error')
-        traceback.print_exc()
-    return X, y
 
 
 def prepare_data():
@@ -66,6 +47,28 @@ class lfw_bus:
 
     def set_target_names(self, target_names_data):
         self.target_names = target_names_data
+
+def create_bus_data():
+    items = load_data()
+    dicts = as_dict(items)
+    images = []
+    data_list = []
+    targets = []
+    target_names = ['dislike', 'like']
+
+    for dict in dicts:
+        data, image, target = dict['data'], dict['image'], dict['target']
+        images.append(image)
+        data_list.append(data)
+        targets.append(target)
+
+    lfw = lfw_bus()
+    lfw.set_data(np.asarray(data_list))
+    lfw.set_images(np.asarray(images))
+    lfw.set_target(np.asarray(targets))
+    lfw.set_target_names(np.asarray(target_names))
+    return lfw
+
 
 def create_lfw():
     target_names = ['Aizawa', 'Asuka', 'Hashimoto', 'Takahashi', 'Tsubasa', 'YuaMikami']
@@ -155,7 +158,8 @@ def as_dict(items):
                 data = convert_image(image)
                 d = {
                     'data': data,
-                    'image': image
+                    'image': image,
+                    'target': item.rate_value
                 }
 
                 face_list.append(d)

@@ -4,13 +4,12 @@ import traceback
 import numpy as np
 import pandas as pd
 import re
-import os
-from busface.util import get_cwd
+from sklearn.decomposition import PCA
+from busface.util import MODEL_PATH, get_data_path, APP_CONFIG
+from sklearn.model_selection import train_test_split
 
-DATA_PATH = 'data/'
-MODEL_PATH = 'model/'
-model_path = os.path.join(get_cwd(), DATA_PATH, MODEL_PATH)
-
+MODEL_FILE = MODEL_PATH + 'train.mdl'
+MIN_TRAIN_NUM = int(APP_CONFIG['sample.n_components'])
 
 def prepare_data():
     items = load_data()
@@ -35,6 +34,7 @@ class lfw_bus:
     data = np.zeros(5)
     target = np.zeros(5)
     target_names = np.zeros(5)
+    ids = np.zeros(5)
 
     def set_images(self, image_data):
         self.images = image_data
@@ -48,27 +48,47 @@ class lfw_bus:
     def set_target_names(self, target_names_data):
         self.target_names = target_names_data
 
-def create_bus_data():
-    items = load_data()
-    dicts = as_dict(items)
+    def set_ids(self, ids):
+        self.ids = ids
+
+def create_data(dicts):
     images = []
     data_list = []
     targets = []
+    ids = []
     target_names = ['dislike', 'like']
 
     for dict in dicts:
-        data, image, target = dict['data'], dict['image'], dict['target']
+        data, image, target, id = dict['data'], dict['image'], dict['target'], dict['id']
         images.append(image)
         data_list.append(data)
         targets.append(target)
+        ids.append(id)
 
     lfw = lfw_bus()
     lfw.set_data(np.asarray(data_list))
     lfw.set_images(np.asarray(images))
     lfw.set_target(np.asarray(targets))
     lfw.set_target_names(np.asarray(target_names))
+    lfw.set_ids(np.asarray(ids))
     return lfw
 
+def create_bus_data():
+    items = load_data()
+    dicts = as_dict(items)
+    return create_data(dicts)
+
+def prepare_data():
+    bus_data = create_bus_data()
+
+    X = bus_data.data
+
+    # the label to predict is the id of the person
+    y = bus_data.target
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.25, random_state=42)
+
+    return X_train, X_test, y_train, y_test
 
 def create_lfw():
     target_names = ['Aizawa', 'Asuka', 'Hashimoto', 'Takahashi', 'Tsubasa', 'YuaMikami']
@@ -91,7 +111,7 @@ def create_lfw():
     return lfw
 
 def get_data_by_name(name, target_value):
-    file = '{}/{}.txt'.format(model_path, name)
+    file = '{}/{}.txt'.format(get_data_path(MODEL_PATH), name)
     with open(file, 'r') as file:
         fanhao_list = file.read()
     data, image = get_faces(fanhao_list)
@@ -157,6 +177,7 @@ def as_dict(items):
                 image = read_image(face.value)
                 data = convert_image(image)
                 d = {
+                    'id': item.fanhao,
                     'data': data,
                     'image': image,
                     'target': item.rate_value
@@ -165,3 +186,21 @@ def as_dict(items):
                 face_list.append(d)
 
     return face_list
+
+def prepare_predict_data():
+    # get not rated data
+    rate_type = None
+    rate_value = None
+    page = None
+    unrated_items, _ = get_items(
+        rate_type=rate_type, rate_value=rate_value, page=page)
+    #mlb = load_model(get_data_path(MODEL_FILE))
+    dicts = as_dict(unrated_items)
+    lfw = create_data(dicts)
+    return lfw.ids, dimension(lfw.data)
+
+def dimension(X_train):
+    pca = PCA(n_components=MIN_TRAIN_NUM, svd_solver='randomized',
+              whiten=True).fit(X_train)
+    X_train_pca = pca.transform(X_train)
+    return X_train_pca

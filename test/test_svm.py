@@ -1,5 +1,5 @@
 from busface.spider.db import get_items, Item, RATE_TYPE, RATE_VALUE, ItemRate, LocalItem, Face, ItemFace, convert_binary_data
-from busface.model.classify import Classify
+from busface.model.classifier import Classify
 import cv2
 import traceback
 import numpy as np

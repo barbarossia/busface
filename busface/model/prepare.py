@@ -22,6 +22,7 @@ def load_data():
     load data from database and do processing
     '''
     rate_type = RATE_TYPE.USER_RATE.value
+    #rate_value = RATE_VALUE.DISLIKE
     rate_value = None
     page = None
     items, _ = get_items(rate_type=rate_type, rate_value=rate_value,

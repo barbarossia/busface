@@ -198,6 +198,9 @@ def prepare_predict_data():
     #mlb = load_model(get_data_path(MODEL_FILE))
     dicts = as_dict(unrated_items)
     lfw = create_data(dicts)
+    n_samples = lfw.data.shape[0]
+    if n_samples < MIN_TRAIN_NUM:
+        raise ValueError(f'训练数据不足, 无法训练模型. 需要{MIN_TRAIN_NUM}, 当前{n_samples}')
     return lfw.ids, dimension(lfw.data)
 
 def dimension(X_train):

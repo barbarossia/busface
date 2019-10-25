@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import GridSearchCV
 from sklearn.decomposition import PCA
 from busface.model.prepare import create_lfw, create_bus_data
 from sklearn import tree
@@ -74,7 +75,12 @@ print("done in %0.3fs" % (time() - t0))
 
 print("Fitting the classifier to the training set")
 t0 = time()
-clf = tree.DecisionTreeClassifier()
+sample_split_range = list(range(2, 50))
+param_grid = dict(min_samples_split=sample_split_range)
+
+clf = GridSearchCV(tree.DecisionTreeClassifier(),
+                   param_grid, cv=5, iid=False)
+
 clf = clf.fit(X_train_pca, y_train)
 print("done in %0.3fs" % (time() - t0))
 

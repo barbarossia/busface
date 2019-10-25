@@ -255,8 +255,8 @@ app = bottle.default_app()
 
 
 def start_app():
-    #t = threading.Thread(target=start_scheduler)
-    #t.start()
+    t = threading.Thread(target=start_scheduler)
+    t.start()
     run(host='0.0.0.0', port=8000, debug=True)
     # run(host='0.0.0.0', port=8000, debug=True, reloader=False)
 
@@ -266,7 +266,7 @@ if __name__ == "__main__":
         freeze_support()
         from busface import __version__
         print(f"Bustag server starting: version: {__version__}\n\n")
-        # import busface.model.classifier as clf
+        import busface.model.classifier as clf
         from busface.util import logger, get_cwd, get_now_time, get_data_path
         from busface.spider.db import (get_items, get_local_items, RATE_TYPE, RATE_VALUE, ItemRate,
                                       Item, LocalItem, DBError, db as dbconn, Face, remove_face)

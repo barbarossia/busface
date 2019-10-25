@@ -176,13 +176,14 @@ def other_settings():
 def do_training():
     error_msg = None
     model_scores = None
-    try:
-        _, model_scores = clf.train()
-    except ValueError as ex:
-        logger.exception(ex)
-        error_msg = ' '.join(ex.args)
+    # try:
+    #     _, model_scores = clf.train()
+    # except ValueError as ex:
+    #     logger.exception(ex)
+    #     error_msg = ' '.join(ex.args)
+    # return template('model', path=request.path, model_scores=model_scores, error_msg=error_msg)
+    add_train_job()
     return template('model', path=request.path, model_scores=model_scores, error_msg=error_msg)
-
 
 @route('/local_fanhao', method=['GET', 'POST'])
 def update_local_fanhao():
@@ -271,7 +272,7 @@ if __name__ == "__main__":
         from busface.spider.db import (get_items, get_local_items, RATE_TYPE, RATE_VALUE, ItemRate,
                                       Item, LocalItem, DBError, db as dbconn, Face, remove_face)
         from busface.spider import db
-        from busface.app.schedule import start_scheduler, add_download_job
+        from busface.app.schedule import start_scheduler, add_download_job, add_train_job
         from busface.spider import bus_spider
         from busface.app.local import add_local_fanhao, load_tags_db
         start_app()

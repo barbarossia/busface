@@ -31,14 +31,30 @@ def download(loop, no_parse_links=False, urls=None):
                'roots': urls, 'count': count}
     extra_options.update(options)
 
-    aspider.download(loop, extra_options)
+    # aspider.download(loop, extra_options)
     try:
         import busface.model.classifier as clf
 
-        clf.recommend()
+        # clf.recommend()
     except FileNotFoundError:
         print('还没有训练好的模型, 无法推荐')
 
+
+def train_work():
+    import busface.model.classifier as clf
+    import time
+    logger.debug('start')
+
+    try:
+        _, model_scores = clf.train()
+
+    except ValueError as ex:
+        logger.exception(ex)
+        error_msg = ' '.join(ex.args)
+        logger.debug(error_msg)
+    logger.debug(model_scores)
+    time.sleep(1)
+    logger.debug('end')
 
 def start_scheduler():
     global scheduler, loop
@@ -61,6 +77,9 @@ def start_scheduler():
 def add_download_job(urls):
     add_job(download, (urls,))
 
+
+def add_train_job():
+    scheduler.add_job(train_work)
 
 def add_job(job_func, args):
     '''

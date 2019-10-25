@@ -104,6 +104,6 @@ venv.bak/
 .mypy_cache/
 
 # db
-*.db_shm
-*.db_wal
+data/*.db-shm
+data/*.db-wal
 

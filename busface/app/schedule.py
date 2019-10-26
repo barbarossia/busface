@@ -31,11 +31,12 @@ def download(loop, no_parse_links=False, urls=None):
                'roots': urls, 'count': count}
     extra_options.update(options)
 
-    # aspider.download(loop, extra_options)
+    aspider.download(loop, extra_options)
     try:
         import busface.model.classifier as clf
 
-        # clf.recommend()
+        print('start recommend')
+        clf.recommend()
     except FileNotFoundError:
         print('还没有训练好的模型, 无法推荐')
 

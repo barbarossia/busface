@@ -10,6 +10,7 @@ import pandas as pd
 
 MODEL_FILE = MODEL_PATH + 'train.mdl'
 MIN_TRAIN_NUM = int(APP_CONFIG['sample.n_components'])
+RATIO = float(APP_CONFIG['recommend.ratio'])
 
 def load():
     model_data = load_model(get_data_path(MODEL_FILE))
@@ -88,7 +89,7 @@ def recommend():
     ids = df['id'].values
     y_mean = df['value'].values
     for id, y in zip(ids, y_mean):
-        if y >= 0.8:
+        if y > RATIO:
             count += 1
             value = 1
         else:

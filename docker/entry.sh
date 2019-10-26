@@ -1,7 +1,7 @@
 #!/bin/bash
 PYTHON=python3
 # check if crontab.txt exists
-cd /app
+# cd /app
 echo `pwd`
 
 ${PYTHON} -m busface.app.index

@@ -54,9 +54,9 @@ def get_data_path(file):
 
 
 def get_model_path(file):
-    cwd = get_cwd()
-    model_path = os.path.join(DATA_PATH, MODEL_PATH)
-    file_path = os.path.join(cwd, model_path, file)
+    basepath = os.path.dirname(__file__)
+    # model_path = os.path.join(DATA_PATH, MODEL_PATH)
+    file_path = os.path.join(basepath, MODEL_PATH, file)
     return file_path
 
 

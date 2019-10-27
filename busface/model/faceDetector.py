@@ -1,6 +1,7 @@
 import cv2
 from busface.util import get_model_path
 
+
 config_path = get_model_path("resnet_ssd_v1.prototxt")
 model_path = get_model_path("resnet_ssd_v1.caffemodel")
 detector = cv2.dnn.readNetFromCaffe(config_path, model_path)

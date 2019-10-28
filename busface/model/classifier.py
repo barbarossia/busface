@@ -1,8 +1,7 @@
 from sklearn.metrics import f1_score, recall_score, accuracy_score, precision_score, confusion_matrix
 from busface.util import logger, get_data_path, MODEL_PATH, APP_CONFIG
 from busface.model.prepare import prepare_data, prepare_predict_data
-from sklearn.model_selection import GridSearchCV
-from sklearn.svm import SVC
+from sklearn import tree
 from busface.model.persist import load_model, dump_model
 from sklearn.decomposition import PCA
 from busface.spider.db import get_items, Item, RATE_TYPE, RATE_VALUE, ItemRate, LocalItem, Face, ItemFace, convert_binary_data
@@ -18,10 +17,12 @@ def load():
 
 
 def create_model():
-    param_grid = {'C': [1e3, 5e3, 1e4, 5e4, 1e5],
-                  'gamma': [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1], }
-    clf = GridSearchCV(SVC(kernel='rbf', class_weight='balanced'),
-                       param_grid, cv=5, iid=False)
+    clf = tree.DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+                       max_features=None, max_leaf_nodes=None,
+                       min_impurity_decrease=0.0, min_impurity_split=None,
+                       min_samples_leaf=1, min_samples_split=43,
+                       min_weight_fraction_leaf=0.0, presort=False,
+                       random_state=None, splitter='best')
     return clf
 
 

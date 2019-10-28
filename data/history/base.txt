@@ -26,3 +26,134 @@ weighted avg       0.67      0.69      0.67       901
 
 [[495  87]
  [196 123]]
+
+
+Total dataset size:
+n_samples: 3601
+n_features: 1850
+n_classes: 2
+Extracting the top 150 eigenfaces from 2700 faces
+done in 1.609s
+Projecting the input data on the eigenfaces orthonormal basis
+done in 0.156s
+Fitting the classifier to the training set
+done in 863.525s
+Best estimator found by grid search:
+SVC(C=1, cache_size=200, class_weight=None, coef0=0.0,
+    decision_function_shape='ovr', degree=3, gamma=0.005, kernel='rbf',
+    max_iter=-1, probability=False, random_state=None, shrinking=True,
+    tol=0.001, verbose=False)
+Predicting people's names on the test set
+done in 0.469s
+              precision    recall  f1-score   support
+
+     dislike       0.73      0.88      0.80       582
+        like       0.65      0.42      0.51       319
+
+    accuracy                           0.72       901
+   macro avg       0.69      0.65      0.66       901
+weighted avg       0.71      0.72      0.70       901
+
+[[511  71]
+ [185 134]]
+
+Process finished with exit code 0
+
+
+Total dataset size:
+n_samples: 3601
+n_features: 1850
+n_classes: 2
+Extracting the top 150 eigenfaces from 2700 faces
+done in 1.859s
+Projecting the input data on the eigenfaces orthonormal basis
+[Parallel(n_jobs=1)]: Using backend SequentialBackend with 1 concurrent workers.
+done in 0.203s
+Fitting the classifier to the training set
+Fitting 5 folds for each of 16 candidates, totalling 80 fits
+[Parallel(n_jobs=1)]: Done  80 out of  80 | elapsed:   41.6s finished
+done in 41.720s
+Best estimator found by grid search:
+KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='manhattan',
+                     metric_params=None, n_jobs=None, n_neighbors=3, p=2,
+                     weights='distance')
+Predicting people's names on the test set
+done in 0.797s
+              precision    recall  f1-score   support
+
+     dislike       0.68      0.94      0.79       582
+        like       0.61      0.18      0.28       319
+
+    accuracy                           0.67       901
+   macro avg       0.64      0.56      0.53       901
+weighted avg       0.65      0.67      0.61       901
+
+[[545  37]
+ [261  58]]
+
+Total dataset size:
+n_samples: 3601
+n_features: 1850
+n_classes: 2
+Extracting the top 150 eigenfaces from 2700 faces
+done in 2.344s
+Projecting the input data on the eigenfaces orthonormal basis
+done in 0.227s
+Fitting the classifier to the training set
+done in 60.770s
+Best estimator found by grid search:
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=3,
+                       max_features=None, max_leaf_nodes=None,
+                       min_impurity_decrease=0.0, min_impurity_split=None,
+                       min_samples_leaf=1, min_samples_split=2,
+                       min_weight_fraction_leaf=0.0, presort=False,
+                       random_state=None, splitter='best')
+Predicting people's names on the test set
+done in 0.016s
+              precision    recall  f1-score   support
+
+     dislike       0.70      0.87      0.78       582
+        like       0.58      0.33      0.42       319
+
+    accuracy                           0.68       901
+   macro avg       0.64      0.60      0.60       901
+weighted avg       0.66      0.68      0.65       901
+
+[[506  76]
+ [215 104]]
+
+Process finished with exit code 0
+
+
+Total dataset size:
+n_samples: 3601
+n_features: 1850
+n_classes: 2
+Extracting the top 150 eigenfaces from 2700 faces
+done in 1.641s
+Projecting the input data on the eigenfaces orthonormal basis
+done in 0.172s
+Fitting the classifier to the training set
+done in 326.049s
+Best estimator found by grid search:
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+                       max_features=None, max_leaf_nodes=None,
+                       min_impurity_decrease=0.0, min_impurity_split=None,
+                       min_samples_leaf=1, min_samples_split=43,
+                       min_weight_fraction_leaf=0.0, presort=False,
+                       random_state=None, splitter='best')
+Predicting people's names on the test set
+done in 0.000s
+              precision    recall  f1-score   support
+
+     dislike       0.72      0.72      0.72       582
+        like       0.49      0.50      0.50       319
+
+    accuracy                           0.64       901
+   macro avg       0.61      0.61      0.61       901
+weighted avg       0.64      0.64      0.64       901
+
+[[417 165]
+ [159 160]]
+
+Process finished with exit code 0

@@ -10,7 +10,10 @@ from sklearn.metrics import confusion_matrix
 from sklearn.decomposition import PCA
 from sklearn.svm import SVC
 from busface.model.prepare import create_lfw, create_bus_data
-from busface.util import  APP_CONFIG
+from busface.util import APP_CONFIG
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import tree
+import numpy as np
 
 
 print(__doc__)
@@ -77,10 +80,10 @@ print("done in %0.3fs" % (time() - t0))
 
 print("Fitting the classifier to the training set")
 t0 = time()
-param_grid = {'C': [1e3, 5e3, 1e4, 5e4, 1e5],
-              'gamma': [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1], }
-clf = GridSearchCV(SVC(kernel='rbf', class_weight='balanced'),
-                   param_grid, cv=5, iid=False)
+# param_grid = {'C': [1, 10, 50, 100, 1e3, 5e3, 1e4, 5e4, 1e5],
+#               'gamma': [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1, 0.5, 0.1], }
+# clf = GridSearchCV(SVC(),
+#                    param_grid, cv=5, iid=False)
 
 # clf = GridSearchCV(cv=5, iid=False,
 #        estimator=SVC(C=1000.0, cache_size=200, class_weight='balanced', coef0=0.0,
@@ -90,6 +93,12 @@ clf = GridSearchCV(SVC(kernel='rbf', class_weight='balanced'),
 #                      verbose=False),
 #         param_grid=param_grid
 #                    )
+
+#
+sample_split_range = list(range(2, 50))
+param_grid = {'criterion': ['gini', 'entropy'],  'min_samples_split': sample_split_range}
+clf = GridSearchCV(tree.DecisionTreeClassifier(),
+                   param_grid, cv=5, iid=False)
 
 clf = clf.fit(X_train_pca, y_train)
 print("done in %0.3fs" % (time() - t0))

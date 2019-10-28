@@ -176,14 +176,13 @@ def other_settings():
 def do_training():
     error_msg = None
     model_scores = None
-    # try:
-    #     _, model_scores = clf.train()
-    # except ValueError as ex:
-    #     logger.exception(ex)
-    #     error_msg = ' '.join(ex.args)
-    # return template('model', path=request.path, model_scores=model_scores, error_msg=error_msg)
-    add_train_job()
+    try:
+         _, model_scores = clf.train()
+    except ValueError as ex:
+        logger.exception(ex)
+        error_msg = ' '.join(ex.args)
     return template('model', path=request.path, model_scores=model_scores, error_msg=error_msg)
+    # add_train_job()
 
 @route('/local_fanhao', method=['GET', 'POST'])
 def update_local_fanhao():

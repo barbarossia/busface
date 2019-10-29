@@ -58,7 +58,8 @@ X_train, X_test, y_train, y_test = train_test_split(
 # #############################################################################
 # Compute a PCA (eigenfaces) on the face dataset (treated as unlabeled
 # dataset): unsupervised feature extraction / dimensionality reduction
-n_components = int(APP_CONFIG['sample.n_components'])
+# n_components = int(APP_CONFIG['sample.n_components'])
+n_components = 32
 
 print("Extracting the top %d eigenfaces from %d faces"
       % (n_components, X_train.shape[0]))
@@ -95,15 +96,19 @@ t0 = time()
 #                    )
 
 #
-sample_split_range = list(range(2, 50))
-param_grid = {'criterion': ['gini', 'entropy'],  'min_samples_split': sample_split_range}
-clf = GridSearchCV(tree.DecisionTreeClassifier(),
-                   param_grid, cv=5, iid=False)
+
+
+clf = tree.DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+                                  max_features=None, max_leaf_nodes=None,
+                                  min_impurity_decrease=0.0, min_impurity_split=None,
+                                  min_samples_leaf=1, min_samples_split=43,
+                                  min_weight_fraction_leaf=0.0, presort=False,
+                                  random_state=None, splitter='best')
 
 clf = clf.fit(X_train_pca, y_train)
 print("done in %0.3fs" % (time() - t0))
 print("Best estimator found by grid search:")
-print(clf.best_estimator_)
+#print(clf.best_estimator_)
 
 # #############################################################################
 # Quantitative evaluation of the model quality on the test set
@@ -149,5 +154,5 @@ plot_gallery(X_test, prediction_titles, h, w)
 eigenface_titles = ["eigenface %d" % i for i in range(eigenfaces.shape[0])]
 plot_gallery(eigenfaces, eigenface_titles, h, w)
 
-plt.show()
+#plt.show()
 

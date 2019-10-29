@@ -15,17 +15,27 @@ import urllib.request
 from busface.util import logger, APP_CONFIG
 
 
+
+
 class AppURLopener(urllib.request.FancyURLopener):
     version = "App/1.7"
 
 
 router = get_router()
 
+def str2bool(v):
+  return v.lower() in ("yes", "true", "t", "1")
+
+
 Tag = namedtuple('Tag', ['type', 'value'])
 Face = namedtuple('Face', ['type', 'value', 'link'])
 
 DESIRED_SIZE_W = int(APP_CONFIG['sample.crop_width'])
 DESIRED_SIZE_H = int(APP_CONFIG['sample.crop_height'])
+MORE_SAMPLES = str2bool(APP_CONFIG['sample.more_samples'])
+
+
+
 
 def parse_item(text):
     '''
@@ -85,12 +95,13 @@ def parse_item(text):
     if cover is not None:
         face_list.extend(cover)
 
-    for sample in samples:
-         link = sample.attrs['href']
-         face_type = 'sample'
-         sample_face = create_face(face_type, link)
-         if sample_face is not None:
-            face_list.extend(sample_face)
+    if MORE_SAMPLES:
+        for sample in samples:
+             link = sample.attrs['href']
+             face_type = 'sample'
+             sample_face = create_face(face_type, link)
+             if sample_face is not None:
+                face_list.extend(sample_face)
 
     meta['tags'] = tag_list
     return meta, face_list

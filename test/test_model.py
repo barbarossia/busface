@@ -35,7 +35,7 @@ def test_classify():
 
 def prepare_predict_data():
     # get not rated data
-    fanhao_list = ['TBTB-057', 'EMRD-148']
+    fanhao_list = ['GS-289', 'IENF-035', 'HBAD-502', 'PIYO-047']
 
     unrated_items = []
     for item_id in fanhao_list:

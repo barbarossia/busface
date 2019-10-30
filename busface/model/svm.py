@@ -58,8 +58,8 @@ X_train, X_test, y_train, y_test = train_test_split(
 # #############################################################################
 # Compute a PCA (eigenfaces) on the face dataset (treated as unlabeled
 # dataset): unsupervised feature extraction / dimensionality reduction
-# n_components = int(APP_CONFIG['sample.n_components'])
-n_components = 32
+n_components = int(APP_CONFIG['sample.n_components'])
+
 
 print("Extracting the top %d eigenfaces from %d faces"
       % (n_components, X_train.shape[0]))
@@ -81,34 +81,20 @@ print("done in %0.3fs" % (time() - t0))
 
 print("Fitting the classifier to the training set")
 t0 = time()
-# param_grid = {'C': [1, 10, 50, 100, 1e3, 5e3, 1e4, 5e4, 1e5],
+#param_grid = {'C': [1, 10, 50, 100, 1e3, 5e3, 1e4, 5e4, 1e5],
 #               'gamma': [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1, 0.5, 0.1], }
-# clf = GridSearchCV(SVC(),
-#                    param_grid, cv=5, iid=False)
+param_grid = {'criterion': ['gini', 'entropy'], 'max_depth': np.arange(3, 15)}
+clf = GridSearchCV(tree.DecisionTreeClassifier(),
+                   param_grid, cv=10, iid=False)
 
-# clf = GridSearchCV(cv=5, iid=False,
-#        estimator=SVC(C=1000.0, cache_size=200, class_weight='balanced', coef0=0.0,
-#                      decision_function_shape='ovr', degree=3, gamma=0.0001,
-#                      kernel='rbf', max_iter=-1, probability=False,
-#                      random_state=None, shrinking=True, tol=0.001,
-#                      verbose=False),
-#         param_grid=param_grid
-#                    )
-
-#
-
-
-clf = tree.DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
-                                  max_features=None, max_leaf_nodes=None,
-                                  min_impurity_decrease=0.0, min_impurity_split=None,
-                                  min_samples_leaf=1, min_samples_split=43,
-                                  min_weight_fraction_leaf=0.0, presort=False,
-                                  random_state=None, splitter='best')
+#param_grid = {'n_neighbors': [3, 5, 11, 19], 'weights': ['uniform', 'distance'], 'metric': ['euclidean', 'manhattan']}
+#clf = GridSearchCV(KNeighborsClassifier(),
+#                  param_grid, cv=10, iid=False)
 
 clf = clf.fit(X_train_pca, y_train)
 print("done in %0.3fs" % (time() - t0))
 print("Best estimator found by grid search:")
-#print(clf.best_estimator_)
+print(clf.best_estimator_)
 
 # #############################################################################
 # Quantitative evaluation of the model quality on the test set

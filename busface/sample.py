@@ -72,13 +72,15 @@ def process_item(text, path, fanhao):
 
 
 def upload_all():
-    target_names = ['Aizawa', 'Asuka', 'Hashimoto', 'Takahashi', 'Tsubasa', 'YuaMikami']
-    for name in target_names:
-        upload(name)
+    for f_name in os.listdir(model_path):
+        if f_name.endswith('.txt'):
+            print(f_name)
+            path = os.path.join(model_path, f_name)
+            upload(path)
 
-def upload(name):
+
+def upload(file):
     print('start read from file')
-    file = '{}/{}.txt'.format(model_path, name)
     with open(file, 'r') as file:
         fanhao_list = file.read()
 

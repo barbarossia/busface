@@ -17,10 +17,10 @@ def load():
 
 
 def create_model():
-    clf = tree.DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+    clf = tree.DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=3,
                        max_features=None, max_leaf_nodes=None,
                        min_impurity_decrease=0.0, min_impurity_split=None,
-                       min_samples_leaf=1, min_samples_split=43,
+                       min_samples_leaf=1, min_samples_split=2,
                        min_weight_fraction_leaf=0.0, presort=False,
                        random_state=None, splitter='best')
     return clf

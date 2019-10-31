@@ -1,17 +1,12 @@
-import sys
 from aspider import aspider
-from busface.util import logger, APP_CONFIG
 from aspider.routeing import get_router
 from busface.spider.parser import parse_item
 from busface.spider.db import save, Item, ItemRate, RATE_TYPE, RATE_VALUE, get_items
 from busface.util import APP_CONFIG, get_full_url, logger
 from busface.app.local import add_local_fanhao
 from busface.spider import bus_spider
-from busface.app.schedule import start_scheduler, add_download_job
-import threading
 import os
 from busface.util import get_cwd
-from busface.upload import upload
 
 
 DATA_PATH = 'data/'
@@ -71,53 +66,33 @@ def process_item(text, path, fanhao):
     save(meta, faces)
     print(f'item {fanhao} is processed')
 
-def test_download():
-    print('start download')
-    roots = ['https://www.cdnbus.bid', ]
-    extra_args = {
-        'roots': roots,
-        'no_parse_links': False,
-        'count': 100
-    }
-    stats = aspider.download(extra_args=extra_args)
-    stats.report()
+
+def upload_all():
+    for f_name in os.listdir(model_path):
+        if f_name.endswith('.txt'):
+            print(f_name)
+            upload(f_name, RATE_VALUE.LIKE)
 
 
-def test_download_fanhao():
-    print('start download')
-    roots = ['https://www.busdmm.work/YSN-484', ]
-    extra_args = {
-        'roots': roots,
-        'no_parse_links': True
-    }
-    stats = aspider.download(extra_args=extra_args)
-    stats.report()
+def upload(file, tag_like):
+    path = os.path.join(model_path, file)
+    print('start read from file')
+    with open(path, 'r') as file:
+        fanhao_list = file.read()
 
+    # tag_like = RATE_VALUE.LIKE
+    missed_fanhao, local_file_count, tag_file_count = add_local_fanhao(
+        fanhao_list, tag_like)
+    if len(missed_fanhao) > 0:
+        print('start download')
+        urls = [bus_spider.get_url_by_fanhao(
+            fanhao) for fanhao in missed_fanhao]
 
-def test_tagit():
-    fanhao = 'UMSO-274'
-    # item_rate = ItemRate.get_by_fanhao(fanhao)
-    rate_type = RATE_TYPE.USER_RATE
-    rate_value = RATE_VALUE.DISLIKE
-    ItemRate.saveit(rate_type, rate_value, fanhao)
-
-def test_tagit_all():
-    rate_type = None
-    rate_value = None
-    page = None
-    items, _ = get_items(
-        rate_type=rate_type, rate_value=rate_value, page=page)
-    for item in items:
-        fanhao = item.fanhao
-        rate_type = RATE_TYPE.USER_RATE
-        rate_value = RATE_VALUE.DISLIKE
-        ItemRate.saveit(rate_type, rate_value, fanhao)
-
-
-
-def test_upload():
-    file = "dislike.txt"
-    upload(file, 0)
-
+        extra_args = {
+            'roots': urls,
+            'no_parse_links': True
+        }
+        stats = aspider.download(extra_args=extra_args)
+        stats.report()
 
 

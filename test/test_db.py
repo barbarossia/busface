@@ -151,5 +151,16 @@ def test_remove_face():
     face_to_remove = item.faces_dict[1]
     remove_face(item, face_to_remove)
 
+def test_dislike_items():
+    rate_type = RATE_TYPE.USER_RATE
+    rate_value = RATE_VALUE.DISLIKE
+    page = None
+    items, _ = get_items(
+        rate_type=rate_type, rate_value=rate_value, page=page)
+
+    with open("Output.txt", "w") as text_file:
+        for item in items:
+            text_file.write("%s,\n" % item.fanhao)
+
 
 

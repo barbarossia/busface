@@ -7,17 +7,17 @@ import sys
 from aspider import aspider
 from busface.util import logger, APP_CONFIG
 import busface.model.classifier as clf
-from busface.upload import upload
+import busface.upload as up
 
 @click.command()
 @click.option("--file", help="file name", type=str)
-@click.option("--rate", help="rate", type=int)
+@click.option("--rate", help="rate", default=1, type=int)
 def upload(file, rate):
     '''
     根据现有模型预测推荐数据
     '''
     try:
-        upload(file, rate)
+        up.upload(file, rate)
     except FileNotFoundError:
         click.echo('file not found')
 
@@ -58,9 +58,9 @@ def main():
     pass
 
 
+main.add_command(upload)
 main.add_command(download)
 main.add_command(recommend)
-main.add_command(upload)
 
 if __name__ == "__main__":
     main()

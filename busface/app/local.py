@@ -43,11 +43,11 @@ def add_local_fanhao(fanhao, tag_like):
                 if local_item:
                     local_file_added += 1
             # if tag_like is True, add it to item_rate table
-            if tag_like:
-                item_rate = ItemRate.saveit(
-                    RATE_TYPE.USER_RATE, RATE_VALUE.LIKE, fanhao)
-                if item_rate:
-                    tag_file_added += 1
+            item_rate = ItemRate.saveit(
+                RATE_TYPE.USER_RATE, tag_like, fanhao)
+            if item_rate:
+                tag_file_added += 1
+
             if not Item.get_by_fanhao(fanhao):
                 # add to get from spider
                 missed_fanhaos.append(fanhao)

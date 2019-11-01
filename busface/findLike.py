@@ -58,7 +58,7 @@ def readyChkData(sql):
 cnt_like = readytraninData(sql_like,1)
 cnt_dislike = readytraninData(sql_dislike,0)
 
-chk_pic,cnt_pic = readyChkData(sql_check)
+# chk_pic,cnt_pic = readyChkData(sql_check)
 
 #  --------  train like and dislike
 clf.setTrainData(np.asarray(trainData))
@@ -87,26 +87,19 @@ def checkPredict(chk_Data_,pred):
 	#  非决策树时使用
 	# for s in res:
 	# 	if s==pred:
-	# 		res_false += 1
-	# 	else:
 	# 		res_true += 1
+	# 	else:
+	# 		res_false += 1
 
 	return res_true,res_false
 
-res_t1,res_f1 = checkPredict(checkData,1)
-res_t0,res_f0 = checkPredict(checkData,0)
-res_t21,res_f21 = checkPredict(chk_pic,1)
-res_t20,res_f20 = checkPredict(chk_pic,0)
-
-tp = res_t1 + res_t0
-tn = res_f1 + res_f0
-fp = res_f21 + res_f20
-fn = res_t21 + res_t20
+tp,fp = checkPredict(checkData,1)
+fn,tn = checkPredict(checkData,0)
 
 print("--------------------")
 print("like",cnt_like)
 print("dislike",cnt_dislike)
-print("check",cnt_pic)
+# print("check",cnt_pic)
 print("--------------------")
 print("TP: " , tp)
 print("TN: " , tn)

@@ -6,6 +6,7 @@ from busface.model.persist import load_model, dump_model
 from sklearn.decomposition import PCA
 from busface.spider.db import get_items, Item, RATE_TYPE, RATE_VALUE, ItemRate, LocalItem, Face, ItemFace, convert_binary_data
 import pandas as pd
+from sklearn.svm import SVC
 
 MODEL_FILE = MODEL_PATH + 'train.mdl'
 MIN_TRAIN_NUM = int(APP_CONFIG['sample.n_components'])
@@ -17,12 +18,10 @@ def load():
 
 
 def create_model():
-    clf = tree.DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=3,
-                       max_features=None, max_leaf_nodes=None,
-                       min_impurity_decrease=0.0, min_impurity_split=None,
-                       min_samples_leaf=1, min_samples_split=2,
-                       min_weight_fraction_leaf=0.0, presort=False,
-                       random_state=None, splitter='best')
+    clf = SVC(C=10, cache_size=200, class_weight=None, coef0=0.0,
+        decision_function_shape='ovr', degree=3, gamma=0.005, kernel='rbf',
+        max_iter=-1, probability=False, random_state=None, shrinking=True,
+        tol=0.001, verbose=False)
     return clf
 
 

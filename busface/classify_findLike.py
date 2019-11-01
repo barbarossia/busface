@@ -15,8 +15,8 @@ class Classify:
 	tsne = None
 
 	def  __init__(self):
-		self.clsf = svm.SVC(gamma='scale')
-		# self.clsf = tree.DecisionTreeClassifier()
+		# self.clsf = svm.SVC(gamma='scale')
+		self.clsf = tree.DecisionTreeClassifier()
 		# self.clsf = neighbors.KNeighborsClassifier(30, weights='distance')
 		self.tsne = manifold.TSNE(n_components=3, init='pca', random_state=0)
 
@@ -49,8 +49,8 @@ class Classify:
 	def chkType(self,faceData):
 		clsf = joblib.load('./train.mdl')
 		arr = clsf.predict(faceData)
-		# score = clsf.predict_proba(faceData)
-		score = None
+		score = clsf.predict_proba(faceData)
+		# score = None
 		# print(score)
 		return arr,score
 

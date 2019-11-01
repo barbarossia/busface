@@ -85,7 +85,7 @@ param_grid = {'C': [1, 10, 50, 100, 1e3, 5e3, 1e4, 5e4, 1e5],
                'gamma': [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1, 0.5, 0.1], }
 #param_grid = {'criterion': ['gini', 'entropy'], 'max_depth': np.arange(3, 15)}
 #clf = GridSearchCV(tree.DecisionTreeClassifier(),
-# #                   param_grid, cv=10, iid=False)
+#                   param_grid, cv=10, iid=False)
 
 clf = GridSearchCV(SVC(),
                    param_grid, cv=10, iid=False)

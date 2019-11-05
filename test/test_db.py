@@ -1,6 +1,6 @@
 from busface.spider.db import get_items, Item, RATE_TYPE, RATE_VALUE, ItemRate, LocalItem, Face, ItemFace, convert_binary_data, remove_face
 from datetime import date
-from busface.spider.parser import parse_face, url_to_image
+
 import busface.model.faceDetector as fd
 import cv2
 import traceback
@@ -75,74 +75,6 @@ def test_tags_list():
         tags_dict[t] = tags_dict[t][:limit]
     print(tags_dict)
 
-
-def test_download_face():
-    rate_type = RATE_TYPE.USER_RATE
-    rate_value = RATE_VALUE.LIKE
-    page = None
-    items, _ = get_items(
-        rate_type=rate_type, rate_value=rate_value, page=page)
-    assert len(items) > 0
-
-    item = items[0]
-    face = item.faces_dict[0]
-    face_url = face.url
-
-
-    inputImg = url_to_image(face_url)
-
-    h, w = inputImg.shape[:2]
-    scale = 1
-    if h > 600 or w > 800:
-        scale = 600 / max(h, w)
-    dims = (int(w * scale), int(h * scale))
-    interpln = cv2.INTER_LINEAR if scale > 1.0 else cv2.INTER_AREA
-    inputImg = cv2.resize(inputImg, dims, interpolation=interpln)
-    faces = fd.detect_faces_dnn(inputImg)
-    faces
-
-def test_save_download_image():
-    face_url = 'https://pics.javcdn.pw/cover/798z_b.jpg'
-    inputImg = url_to_image(face_url)
-    img_encode = cv2.imencode('.jpg', inputImg)[1]
-    print(type(img_encode))
-    blob = img_encode.tobytes()
-    face= Face.create(type_='genre', value=blob,
-                        url=face_url)
-    face
-
-def test_save_detect_face():
-    face_url = 'https://pics.javcdn.pw/cover/798z_b.jpg'
-
-    blob = parse_face(face_url)
-    created = Face.create(type_='genre', value=blob,
-                       url=face_url)
-    created
-
-def test_update_face():
-    id = 407
-    face_info = Face.getit(id)
-    face_info.value = parse_face(face_info.url)
-    face_info = Face.updateit(face_info)
-    face_info
-
-def test_download_items():
-    rate_type = RATE_TYPE.USER_RATE
-    rate_value = RATE_VALUE.LIKE
-    page = None
-    items, _ = get_items(
-        rate_type=rate_type, rate_value=rate_value, page=page)
-    assert len(items) > 0
-    try:
-        for item in items:
-            for face in item.faces_dict:
-                if face.value == None:
-                    face.value = parse_face(face.url)
-                    face = Face.updateit(face)
-                    print('update face')
-    except Exception as e:
-        print('system error')
-        traceback.print_exc()
 
 def test_remove_face():
     fanhao = 'SSNI-589'

@@ -7,6 +7,15 @@ import shutil
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor('../test/shape_predictor_68_face_landmarks.dat')
 
+def test_detector_face_noalign():
+    images_path = '../test/6rfl_b.jpg'
+    faces = face_data_normalizer(images_path, align_faces_=False, output_size=50)
+    write_faces_to_disk('data/faces', faces)
+
+def test_detector_face_align():
+    images_path = '../test/6rfl_b.jpg'
+    faces = face_data_normalizer(images_path, align_faces_=True, output_size=256)
+    write_faces_to_disk('data/faces', faces)
 
 def write_faces_to_disk(directory, faces):
     print("writing faces to disk...")
@@ -15,7 +24,7 @@ def write_faces_to_disk(directory, faces):
     print('creating output directory: %s' % (directory))
     os.mkdir(directory)
     for i in range(faces.shape[0]):
-        cv2.imwrite(''.join([directory, "%03d.jpg" % i]), faces[i, :, :, ::-1])
+        cv2.imwrite(''.join([directory, "%03d.jpg" % i]), faces[i, :, ::-1])
     print("wrote %d faces" % (faces.shape[0]))
 
 def face_data_normalizer(images_path, align_faces_=True, output_size=256):
@@ -24,6 +33,7 @@ def face_data_normalizer(images_path, align_faces_=True, output_size=256):
         return
 
     faces = []
+    #image = image[:, :, ::-1]  # BGR to RGB
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     rects = detector(gray, 1)
 
@@ -83,5 +93,6 @@ def face_data_normalizer(images_path, align_faces_=True, output_size=256):
                     faces.append(face)
                 except:
                     continue
+        faces = np.asarray(faces)
         return faces
 

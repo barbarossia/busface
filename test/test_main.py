@@ -85,7 +85,7 @@ def test_download():
 
 def test_download_fanhao():
     print('start download')
-    roots = ['https://www.busdmm.work/YSN-484', ]
+    roots = ['https://www.busdmm.work/SSNI-233', ]
     extra_args = {
         'roots': roots,
         'no_parse_links': True

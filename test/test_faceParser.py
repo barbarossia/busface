@@ -1,10 +1,10 @@
-from busface.spider.faceParser import parse_face, url_to_image
+from busface.spider.faceParser import parse_faces, url_to_image
 
 
 def test_save_detect_face():
-    face_url = 'https://pics.javcdn.pw/cover/798z_b.jpg'
+    face_url = 'https://pics.javcdn.pw/cover/6lim_b.jpg'
 
-    blob = parse_face(face_url)
+    blob = parse_faces(face_url)
     blob
 
 

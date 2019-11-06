@@ -10,8 +10,8 @@ from sklearn.model_selection import train_test_split
 
 MODEL_FILE = MODEL_PATH + 'train.mdl'
 MIN_TRAIN_NUM = int(APP_CONFIG['sample.n_components'])
-DESIRED_SIZE_W = int(APP_CONFIG['sample.crop_width'])
-DESIRED_SIZE_H = int(APP_CONFIG['sample.crop_height'])
+DESIRED_SIZE = int(APP_CONFIG['sample.output_size'])
+
 
 def prepare_data():
     items = load_data()
@@ -161,7 +161,7 @@ def get_faces(list):
 
 
 def read_image(value):
-    default_slice = (slice(0, DESIRED_SIZE_H), slice(0, DESIRED_SIZE_W))
+    default_slice = (slice(0, DESIRED_SIZE), slice(0, DESIRED_SIZE))
     image = np.asarray(bytearray(value), dtype="uint8")
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
     face = np.asarray(image[default_slice], dtype=np.float32)
@@ -200,7 +200,7 @@ def prepare_predict_data():
     page = None
     unrated_items, _ = get_items(
         rate_type=rate_type, rate_value=rate_value, page=page)
-    #mlb = load_model(get_data_path(MODEL_FILE))
+
     dicts = as_dict(unrated_items)
     lfw = create_data(dicts)
     n_samples = lfw.data.shape[0]

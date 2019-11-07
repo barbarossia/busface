@@ -53,6 +53,10 @@ def get_data_path(file):
     return file_path
 
 
+def str2bool(v):
+  return v.lower() in ("yes", "true", "t", "1")
+
+
 def get_model_path(file):
     basepath = os.path.dirname(__file__)
     # model_path = os.path.join(DATA_PATH, MODEL_PATH)

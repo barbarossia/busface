@@ -5,14 +5,13 @@ import re
 from collections import namedtuple
 from requests_html import HTML
 from aspider.routeing import get_router
-from busface.util import logger, APP_CONFIG
+from busface.util import logger, APP_CONFIG, str2bool
 from busface.spider.faceParser import parse_faces
 
 
 router = get_router()
 
-def str2bool(v):
-  return v.lower() in ("yes", "true", "t", "1")
+
 
 
 Tag = namedtuple('Tag', ['type', 'value'])

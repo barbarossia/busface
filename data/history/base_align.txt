@@ -1,0 +1,28 @@
+Total dataset size:
+n_samples: 508
+n_features: 16384
+n_classes: 2
+Extracting the top 300 eigenfaces from 381 faces
+done in 4.209s
+Projecting the input data on the eigenfaces orthonormal basis
+done in 0.426s
+Fitting the classifier to the training set
+done in 57.390s
+Best estimator found by grid search:
+SVC(C=10, cache_size=200, class_weight=None, coef0=0.0,
+    decision_function_shape='ovr', degree=3, gamma=0.0005, kernel='rbf',
+    max_iter=-1, probability=False, random_state=None, shrinking=True,
+    tol=0.001, verbose=False)
+Predicting people's names on the test set
+done in 0.024s
+              precision    recall  f1-score   support
+
+     dislike       0.84      0.73      0.78        77
+        like       0.65      0.78      0.71        50
+
+    accuracy                           0.75       127
+   macro avg       0.74      0.75      0.74       127
+weighted avg       0.76      0.75      0.75       127
+
+[[56 21]
+ [11 39]]

@@ -10,8 +10,10 @@ from busface.spider import bus_spider
 from busface.app.schedule import start_scheduler, add_download_job
 import threading
 import os
-from busface.util import get_cwd
+from busface.util import get_cwd, str2bool
 from busface.upload import upload
+
+NO_FACE = str2bool(APP_CONFIG['sample.no_face'])
 
 
 DATA_PATH = 'data/'
@@ -66,9 +68,8 @@ def process_item(text, path, fanhao):
     url = path
     meta, faces = parse_item(text)
     meta.update(url=url)
-    # logger.debug('meta keys', len(meta.keys()))
-    # logger.debug('faces cout', len(faces))
-    save(meta, faces)
+    if (len(faces) > 0 or NO_FACE):
+        save(meta, faces)
     print(f'item {fanhao} is processed')
 
 def test_download():
@@ -85,7 +86,7 @@ def test_download():
 
 def test_download_fanhao():
     print('start download')
-    roots = ['https://www.busdmm.work/SSNI-233', ]
+    roots = ['https://www.busdmm.work/IPZ-860', ]
     extra_args = {
         'roots': roots,
         'no_parse_links': True

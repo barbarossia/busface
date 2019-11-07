@@ -7,9 +7,10 @@ import signal
 from aspider.routeing import get_router
 from .parser import parse_item
 from .db import save, Item
-from busface.util import APP_CONFIG, get_full_url, logger
+from busface.util import APP_CONFIG, get_full_url, logger, str2bool
 router = get_router()
 MAXPAGE = 30
+NO_FACE = str2bool(APP_CONFIG['sample.no_face'])
 
 
 def get_url_by_fanhao(fanhao):
@@ -55,7 +56,6 @@ def process_item(text, path, fanhao):
     url = path
     meta, faces = parse_item(text)
     meta.update(url=url)
-#     logger.debug('meta keys', len(meta.keys()))
-#     logger.debug('tag count', len(tags))
-    save(meta, faces)
+    if (len(faces) > 0 or NO_FACE):
+        save(meta, faces)
     print(f'item {fanhao} is processed')

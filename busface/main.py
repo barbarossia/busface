@@ -32,6 +32,16 @@ def recommend():
     except FileNotFoundError:
         click.echo('还没有训练好的模型, 无法推荐')
 
+@click.command()
+def train():
+    '''
+    根据现有模型预测推荐数据
+    '''
+    try:
+        clf.train()
+    except ValueError:
+        click.echo('训练数据不足, 无法训练模型')
+
 
 @click.command()
 @click.option("--count", help="打印次数", type=int)
@@ -61,6 +71,7 @@ def main():
 main.add_command(upload)
 main.add_command(download)
 main.add_command(recommend)
+main.add_command(train)
 
 if __name__ == "__main__":
     main()

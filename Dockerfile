@@ -21,9 +21,8 @@ RUN pip download --destination-directory /install -r /app/requirements.txt
 
 FROM python:3.7.4-slim  as release
 
-RUN apt-get update && apt-get -y install cron git libglib2.0-0 libsm6 libxext6 libxrender-dev
-RUN apt-get update && apt-get -y install build-essential cmake pkg-config
-RUN apt-get update && apt-get -y install libgtk-3-dev libboost-python-dev
+RUN apt-get update && apt-get -y install cron git libglib2.0-0 libsm6 libxext6 libxrender-dev \
+    && cmake pkg-config libgtk-3-dev libboost-python-dev
 
 WORKDIR /app
 

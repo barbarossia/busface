@@ -10,7 +10,7 @@ Babel==2.7.0
 beautifulsoup4==4.8.1
 bottle==0.12.17
 bs4==0.0.1
-certifi==2019.9.11
+certifi==2022.12.7
 chardet==3.0.4
 Click==7.0
 cmake==3.15.3
